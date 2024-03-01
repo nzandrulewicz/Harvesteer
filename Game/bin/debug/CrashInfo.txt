@@ -1,0 +1,15 @@
+System.NotImplementedException: Does not support zlib
+   at TMXGlueLib.mapLayerData.get_tiles() in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\TileGraphics\TiledMapSave.Serialization.Generated.cs:line 656
+   at TMXGlueLib.DataTypes.ReducedTileMapInfo.CreateFromTiledMapSave(TiledMapSave tiledMapSave, String tmxDirectory, FileReferenceType referenceType, ReducedTileMapInfo reducedTileMapInfo) in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\TileGraphics\ReducedTileMapInfo.TiledMapSave.Generated.cs:line 139
+   at TMXGlueLib.DataTypes.ReducedTileMapInfo.FromTiledMapSave(TiledMapSave tiledMapSave, Single scale, Single zOffset, String directory, FileReferenceType referenceType) in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\TileGraphics\ReducedTileMapInfo.TiledMapSave.Generated.cs:line 80
+   at FlatRedBall.TileGraphics.LayeredTileMap.FromTiledMapSave(String tiledMapSaveFile, String contentManager, TiledMapSave tms) in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\TileGraphics\LayeredTileMap.Generated.cs:line 474
+   at FlatRedBall.TileGraphics.LayeredTileMap.FromTiledMapSave(String fileName, String contentManager) in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\TileGraphics\LayeredTileMap.Generated.cs:line 444
+   at Harvesteer.Screens.Level1.LoadStaticContent(String contentManagerName) in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\Screens\Level1.Generated.cs:line 147
+   at Harvesteer.Screens.Level1.Initialize(Boolean addToManagers) in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\Screens\Level1.Generated.cs:line 31
+   at FlatRedBall.Screens.ScreenManager.LoadScreen(String screen)
+   at FlatRedBall.Screens.ScreenManager.Start(Type screenToStartWithType)
+   at Harvesteer.Game1.GeneratedInitialize() in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\Game1.Generated.cs:line 54
+   at Harvesteer.Game1.Initialize() in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\Game1.cs:line 66
+   at Microsoft.Xna.Framework.Game.DoInitialize()
+   at Microsoft.Xna.Framework.Game.Run(GameRunBehavior runBehavior)
+   at Harvesteer.Program.Main(String[] args) in C:\Users\PC\Desktop\Games\Harvesteer\Harvesteer\Program.cs:line 25
