@@ -34,11 +34,11 @@ namespace Harvesteer.Screens
             }
         }
         private FlatRedBall.Math.Collision.CollidableListVsTileShapeCollectionRelationship<Entities.Player> PlayerVsSolidCollision;
-        private FlatRedBall.Math.Collision.ListVsListRelationship<Entities.Player, Entities.Enemy> PlayerAxisAlignedRectangleInstanceVsEnemy;
-        private FlatRedBall.Math.Collision.ListVsListRelationship<Entities.Player, Entities.Enemy> PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy;
+        private FlatRedBall.Math.Collision.ListVsListRelationship<Entities.Player, Entities.Enemy> PlayerBodyCollisionVsEnemy;
+        private FlatRedBall.Math.Collision.ListVsListRelationship<Entities.Player, Entities.Enemy> PlayerSwordCollisionVsEnemy;
         private Harvesteer.Entities.EnemySpawner EnemySpawner1;
-        public event System.Action<Entities.Player, Entities.Enemy> PlayerVsEnemyCollided;
-        public event System.Action<Entities.Player, Entities.Enemy> PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollided;
+        public event System.Action<Entities.Player, Entities.Enemy> PlayerAxisAlignedRectangleInstanceVsEnemyCollided;
+        public event System.Action<Entities.Player, Entities.Enemy> PlayerSwordCollisionVsEnemyCollided;
         public GameScreen () 
         	: this ("GameScreen")
         {
@@ -71,31 +71,20 @@ namespace Harvesteer.Screens
     PlayerVsSolidCollision = FlatRedBall.Math.Collision.CollisionManagerTileShapeCollectionExtensions.CreateTileRelationship(FlatRedBall.Math.Collision.CollisionManager.Self, PlayerList, SolidCollision);
     PlayerVsSolidCollision.Name = "PlayerVsSolidCollision";
     PlayerVsSolidCollision.SetMoveCollision(0f, 1f);
-    PlayerVsSolidCollision.CollisionOccurred += (first, second) =>
-    {
-    }
-    ;
 }
 
-            PlayerAxisAlignedRectangleInstanceVsEnemy = FlatRedBall.Math.Collision.CollisionManager.Self.CreateRelationship(PlayerList, EnemyList);
-PlayerAxisAlignedRectangleInstanceVsEnemy.SetFirstSubCollision(item => item.AxisAlignedRectangleInstance, "AxisAlignedRectangleInstance");
-PlayerAxisAlignedRectangleInstanceVsEnemy.CollisionLimit = FlatRedBall.Math.Collision.CollisionLimit.All;
-PlayerAxisAlignedRectangleInstanceVsEnemy.ListVsListLoopingMode = FlatRedBall.Math.Collision.ListVsListLoopingMode.PreventDoubleChecksPerFrame;
-PlayerAxisAlignedRectangleInstanceVsEnemy.Name = "PlayerAxisAlignedRectangleInstanceVsEnemy";
-PlayerAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += (first, second) =>
-{
-}
-;
+            PlayerBodyCollisionVsEnemy = FlatRedBall.Math.Collision.CollisionManager.Self.CreateRelationship(PlayerList, EnemyList);
+PlayerBodyCollisionVsEnemy.SetFirstSubCollision(item => item.BodyCollision, "BodyCollision");
+PlayerBodyCollisionVsEnemy.CollisionLimit = FlatRedBall.Math.Collision.CollisionLimit.All;
+PlayerBodyCollisionVsEnemy.ListVsListLoopingMode = FlatRedBall.Math.Collision.ListVsListLoopingMode.PreventDoubleChecksPerFrame;
+PlayerBodyCollisionVsEnemy.Name = "PlayerBodyCollisionVsEnemy";
+PlayerBodyCollisionVsEnemy.SetMoveCollision(1f, 0.25f);
 
-            PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy = FlatRedBall.Math.Collision.CollisionManager.Self.CreateRelationship(PlayerList, EnemyList);
-PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.SetFirstSubCollision(item => item.PlayerSwordAxisAlignedRectangleInstance, "PlayerSwordAxisAlignedRectangleInstance");
-PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionLimit = FlatRedBall.Math.Collision.CollisionLimit.All;
-PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.ListVsListLoopingMode = FlatRedBall.Math.Collision.ListVsListLoopingMode.PreventDoubleChecksPerFrame;
-PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.Name = "PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy";
-PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += (first, second) =>
-{
-}
-;
+            PlayerSwordCollisionVsEnemy = FlatRedBall.Math.Collision.CollisionManager.Self.CreateRelationship(PlayerList, EnemyList);
+PlayerSwordCollisionVsEnemy.SetFirstSubCollision(item => item.SwordCollision, "SwordCollision");
+PlayerSwordCollisionVsEnemy.CollisionLimit = FlatRedBall.Math.Collision.CollisionLimit.All;
+PlayerSwordCollisionVsEnemy.ListVsListLoopingMode = FlatRedBall.Math.Collision.ListVsListLoopingMode.PreventDoubleChecksPerFrame;
+PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
 
             
             
@@ -193,8 +182,8 @@ PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += (first
                 EnemySpawner1.Destroy();
                 EnemySpawner1.Detach();
             }
-            PlayerAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred -= OnPlayerVsEnemyCollidedTunnel;
-            PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred -= OnPlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollidedTunnel;
+            PlayerBodyCollisionVsEnemy.CollisionOccurred -= OnPlayerAxisAlignedRectangleInstanceVsEnemyCollidedTunnel;
+            PlayerSwordCollisionVsEnemy.CollisionOccurred -= OnPlayerSwordCollisionVsEnemyCollidedTunnel;
             FlatRedBall.Math.Collision.CollisionManager.Self.BeforeCollision -= HandleBeforeCollisionGenerated;
             FlatRedBall.Math.Collision.CollisionManager.Self.Relationships.Clear();
             CustomDestroy();
@@ -203,14 +192,16 @@ PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += (first
         {
             bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
-            PlayerAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += OnPlayerVsEnemyCollided;
-            PlayerAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += OnPlayerVsEnemyCollidedTunnel;
-            PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += OnPlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollided;
-            PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += OnPlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollidedTunnel;
+            PlayerBodyCollisionVsEnemy.CollisionOccurred += OnPlayerAxisAlignedRectangleInstanceVsEnemyCollided;
+            PlayerBodyCollisionVsEnemy.CollisionOccurred += OnPlayerAxisAlignedRectangleInstanceVsEnemyCollidedTunnel;
+            PlayerSwordCollisionVsEnemy.CollisionOccurred += OnPlayerSwordCollisionVsEnemyCollided;
+            PlayerSwordCollisionVsEnemy.CollisionOccurred += OnPlayerSwordCollisionVsEnemyCollidedTunnel;
             if (!PlayerList.Contains(Player1))
             {
                 PlayerList.Add(Player1);
             }
+            Player1.DamageToDeal = 1m;
+            Player1.MaxHealth = 5m;
             if (Player1.Parent == null)
             {
                 Player1.X = 200f;
@@ -235,6 +226,7 @@ PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += (first
             {
                 Player1.RelativeZ = 0f;
             }
+            Player1.SecondsBetweenDamage = 1;
             if (Map!= null)
             {
                 if (Map.Parent == null)
@@ -276,6 +268,8 @@ PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += (first
                 Player1.AssignCustomVariables(true);
                 EnemySpawner1.AssignCustomVariables(true);
             }
+            Player1.DamageToDeal = 1m;
+            Player1.MaxHealth = 5m;
             if (Player1.Parent == null)
             {
                 Player1.X = 200f;
@@ -300,6 +294,7 @@ PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy.CollisionOccurred += (first
             {
                 Player1.RelativeZ = 0f;
             }
+            Player1.SecondsBetweenDamage = 1;
             if (Map != null)
             {
                 if (Map.Parent == null)

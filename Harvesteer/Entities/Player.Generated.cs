@@ -15,7 +15,7 @@ using Harvesteer.DataTypes;
 using FlatRedBall.IO.Csv;
 namespace Harvesteer.Entities
 {
-    public partial class Player : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable, FlatRedBall.Entities.IEntity, FlatRedBall.Math.Geometry.ICollidable
+    public partial class Player : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable, FlatRedBall.Entities.IEntity, FlatRedBall.Math.Geometry.ICollidable, FlatRedBall.Entities.IDamageArea, FlatRedBall.Entities.IDamageable
     {
         // This is made static so that static lazy-loaded content can access it.
         public static string ContentManagerName { get; set; }
@@ -31,42 +31,77 @@ namespace Harvesteer.Entities
         public static System.Collections.Generic.Dictionary<string, Harvesteer.DataTypes.TopDownValues> TopDownValuesStatic;
         protected static Microsoft.Xna.Framework.Graphics.Texture2D PlayerSprite;
         
-        private FlatRedBall.Math.Geometry.AxisAlignedRectangle mAxisAlignedRectangleInstance;
-        public FlatRedBall.Math.Geometry.AxisAlignedRectangle AxisAlignedRectangleInstance
+        private FlatRedBall.Math.Geometry.AxisAlignedRectangle mBodyCollision;
+        public FlatRedBall.Math.Geometry.AxisAlignedRectangle BodyCollision
         {
             get
             {
-                return mAxisAlignedRectangleInstance;
+                return mBodyCollision;
             }
             private set
             {
-                mAxisAlignedRectangleInstance = value;
+                mBodyCollision = value;
             }
         }
         private FlatRedBall.Sprite SpriteInstance;
-        private Harvesteer.GumRuntimes.HealthBarRuntime HealthBarRuntimeInstance;
-        private FlatRedBall.Math.Geometry.AxisAlignedRectangle mPlayerSwordAxisAlignedRectangleInstance;
-        public FlatRedBall.Math.Geometry.AxisAlignedRectangle PlayerSwordAxisAlignedRectangleInstance
+        private FlatRedBall.Math.Geometry.Polygon mSwordCollision;
+        public FlatRedBall.Math.Geometry.Polygon SwordCollision
         {
             get
             {
-                return mPlayerSwordAxisAlignedRectangleInstance;
+                return mSwordCollision;
             }
             private set
             {
-                mPlayerSwordAxisAlignedRectangleInstance = value;
+                mSwordCollision = value;
             }
         }
-        private int mStartingHealth = 3;
-        public virtual int StartingHealth
+        private System.Double mSecondsBetweenDamage = 0;
+        public virtual System.Double SecondsBetweenDamage
         {
             set
             {
-                mStartingHealth = value;
+                mSecondsBetweenDamage = value;
             }
             get
             {
-                return mStartingHealth;
+                return mSecondsBetweenDamage;
+            }
+        }
+        private decimal mDamageToDeal = 1m;
+        public virtual decimal DamageToDeal
+        {
+            set
+            {
+                mDamageToDeal = value;
+            }
+            get
+            {
+                return mDamageToDeal;
+            }
+        }
+        private decimal mMaxHealth = 5m;
+        public virtual decimal MaxHealth
+        {
+            set
+            {
+                mMaxHealth = value;
+            }
+            get
+            {
+                return mMaxHealth;
+            }
+        }
+        private int mTeamIndex = 0;
+        public virtual int TeamIndex
+        {
+            set
+            {
+                mTeamIndex = value;
+            }
+            get
+            {
+                return mTeamIndex;
             }
         }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
@@ -81,7 +116,21 @@ namespace Harvesteer.Entities
         public HashSet<string> LastFrameItemsCollidedAgainst { get; private set;} = new HashSet<string>();
         public HashSet<object> ObjectsCollidedAgainst { get; private set;} = new HashSet<object>();
         public HashSet<object> LastFrameObjectsCollidedAgainst { get; private set;} = new HashSet<object>();
-        System.Collections.Generic.List<GumCoreShared.FlatRedBall.Embedded.PositionedObjectGueWrapper> gumAttachmentWrappers = new System.Collections.Generic.List<GumCoreShared.FlatRedBall.Embedded.PositionedObjectGueWrapper>();
+        public Action<decimal, FlatRedBall.Entities.IDamageable> ReactToDamageDealt { get; set; }
+        public Func<decimal, FlatRedBall.Entities.IDamageable, decimal> ModifyDamageDealt { get; set; }
+        public object DamageDealer { get; set; }
+        public event Action Destroyed;
+        public Action<decimal, FlatRedBall.Entities.IDamageable> KilledDamageable { get; set; }
+        public Action<FlatRedBall.Entities.IDamageable> RemovedByCollision { get; set; }
+        public bool IsDamageDealingEnabled { get; set; } = true;
+        public System.Collections.Generic.Dictionary<FlatRedBall.Entities.IDamageArea, double> DamageAreaLastDamage { get; set; } = new System.Collections.Generic.Dictionary<FlatRedBall.Entities.IDamageArea, double>();
+        public Action<decimal, FlatRedBall.Entities.IDamageArea> ReactToDamageReceived { get; set; }
+        public Func<decimal, FlatRedBall.Entities.IDamageArea, decimal> ModifyDamageReceived { get; set; }
+        public decimal CurrentHealth { get; set; }
+        public Action<decimal, FlatRedBall.Entities.IDamageArea> Died { get; set; }
+        public bool IsDamageReceivingEnabled { get; set; } = true;
+        public double InvulnerabilityTimeAfterDamage { get; set; } = 0;
+        public double LastDamageTime { get; set; } = -999;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
         public Player () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
@@ -100,16 +149,15 @@ namespace Harvesteer.Entities
         protected virtual void InitializeEntity (bool addToManagers) 
         {
             LoadStaticContent(ContentManagerName);
-            mAxisAlignedRectangleInstance = new FlatRedBall.Math.Geometry.AxisAlignedRectangle();
-            mAxisAlignedRectangleInstance.Name = "AxisAlignedRectangleInstance";
-            mAxisAlignedRectangleInstance.CreationSource = "Glue";
+            mBodyCollision = new FlatRedBall.Math.Geometry.AxisAlignedRectangle();
+            mBodyCollision.Name = "BodyCollision";
+            mBodyCollision.CreationSource = "Glue";
             SpriteInstance = new FlatRedBall.Sprite();
             SpriteInstance.Name = "SpriteInstance";
             SpriteInstance.CreationSource = "Glue";
-            {var oldLayoutSuspended = global::Gum.Wireframe.GraphicalUiElement.IsAllLayoutSuspended; global::Gum.Wireframe.GraphicalUiElement.IsAllLayoutSuspended = true; HealthBarRuntimeInstance = new Harvesteer.GumRuntimes.HealthBarRuntime();global::Gum.Wireframe.GraphicalUiElement.IsAllLayoutSuspended = oldLayoutSuspended; HealthBarRuntimeInstance.UpdateFontRecursive();HealthBarRuntimeInstance.UpdateLayout();}
-            mPlayerSwordAxisAlignedRectangleInstance = new FlatRedBall.Math.Geometry.AxisAlignedRectangle();
-            mPlayerSwordAxisAlignedRectangleInstance.Name = "PlayerSwordAxisAlignedRectangleInstance";
-            mPlayerSwordAxisAlignedRectangleInstance.CreationSource = "Glue";
+            mSwordCollision = new FlatRedBall.Math.Geometry.Polygon();
+            mSwordCollision.Name = "SwordCollision";
+            mSwordCollision.CreationSource = "Glue";
             InitializeInput();
             if (TopDownValues?.Count > 0)
             {
@@ -129,33 +177,17 @@ namespace Harvesteer.Entities
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
-            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mAxisAlignedRectangleInstance, LayerProvidedByContainer);
+            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mBodyCollision, LayerProvidedByContainer);
             FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
-            {
-HealthBarRuntimeInstance.AddToManagers(RenderingLibrary.SystemManagers.Default, System.Linq.Enumerable.FirstOrDefault(FlatRedBall.Gum.GumIdb.AllGumLayersOnFrbLayer(LayerProvidedByContainer)));
-var wrapperForAttachment = new GumCoreShared.FlatRedBall.Embedded.PositionedObjectGueWrapper(this, HealthBarRuntimeInstance);
-wrapperForAttachment.Name = "HealthBarRuntimeInstance";
-FlatRedBall.SpriteManager.AddPositionedObject(wrapperForAttachment);
-gumAttachmentWrappers.Add(wrapperForAttachment);
-}
-
-            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mPlayerSwordAxisAlignedRectangleInstance, LayerProvidedByContainer);
+            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mSwordCollision, LayerProvidedByContainer);
         }
         public virtual void AddToManagers (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
-            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mAxisAlignedRectangleInstance, LayerProvidedByContainer);
+            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mBodyCollision, LayerProvidedByContainer);
             FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
-            {
-HealthBarRuntimeInstance.AddToManagers(RenderingLibrary.SystemManagers.Default, System.Linq.Enumerable.FirstOrDefault(FlatRedBall.Gum.GumIdb.AllGumLayersOnFrbLayer(LayerProvidedByContainer)));
-var wrapperForAttachment = new GumCoreShared.FlatRedBall.Embedded.PositionedObjectGueWrapper(this, HealthBarRuntimeInstance);
-wrapperForAttachment.Name = "HealthBarRuntimeInstance";
-FlatRedBall.SpriteManager.AddPositionedObject(wrapperForAttachment);
-gumAttachmentWrappers.Add(wrapperForAttachment);
-}
-
-            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mPlayerSwordAxisAlignedRectangleInstance, LayerProvidedByContainer);
+            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mSwordCollision, LayerProvidedByContainer);
             AddToManagersBottomUp(layerToAddTo);
             CustomInitialize();
         }
@@ -180,56 +212,49 @@ gumAttachmentWrappers.Add(wrapperForAttachment);
         {
             FlatRedBall.SpriteManager.RemovePositionedObject(this);
             
-            if (AxisAlignedRectangleInstance != null)
+            if (BodyCollision != null)
             {
-                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(AxisAlignedRectangleInstance);
+                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(BodyCollision);
             }
             if (SpriteInstance != null)
             {
                 FlatRedBall.SpriteManager.RemoveSpriteOneWay(SpriteInstance);
             }
-            if (HealthBarRuntimeInstance != null)
+            if (SwordCollision != null)
             {
-                HealthBarRuntimeInstance.RemoveFromManagers();
-            }
-            if (PlayerSwordAxisAlignedRectangleInstance != null)
-            {
-                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(PlayerSwordAxisAlignedRectangleInstance);
+                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(SwordCollision);
             }
             mGeneratedCollision.RemoveFromManagers(clearThis: true);
-            for (int i = gumAttachmentWrappers.Count-1; i > -1; i--)
-            {
-                FlatRedBall.SpriteManager.RemovePositionedObject(gumAttachmentWrappers[i]);
-            }
+            Destroyed?.Invoke();
             CustomDestroy();
         }
         public virtual void PostInitialize () 
         {
             bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
-            if (mAxisAlignedRectangleInstance.Parent == null)
+            if (mBodyCollision.Parent == null)
             {
-                mAxisAlignedRectangleInstance.CopyAbsoluteToRelative();
-                mAxisAlignedRectangleInstance.AttachTo(this, false);
+                mBodyCollision.CopyAbsoluteToRelative();
+                mBodyCollision.AttachTo(this, false);
             }
-            if (AxisAlignedRectangleInstance.Parent == null)
+            if (BodyCollision.Parent == null)
             {
-                AxisAlignedRectangleInstance.X = 0f;
-            }
-            else
-            {
-                AxisAlignedRectangleInstance.RelativeX = 0f;
-            }
-            if (AxisAlignedRectangleInstance.Parent == null)
-            {
-                AxisAlignedRectangleInstance.Y = 0f;
+                BodyCollision.X = 0f;
             }
             else
             {
-                AxisAlignedRectangleInstance.RelativeY = 0f;
+                BodyCollision.RelativeX = 0f;
             }
-            AxisAlignedRectangleInstance.Width = 16f;
-            AxisAlignedRectangleInstance.Height = 24f;
+            if (BodyCollision.Parent == null)
+            {
+                BodyCollision.Y = 0f;
+            }
+            else
+            {
+                BodyCollision.RelativeY = 0f;
+            }
+            BodyCollision.Width = 16f;
+            BodyCollision.Height = 16f;
             if (SpriteInstance.Parent == null)
             {
                 SpriteInstance.CopyAbsoluteToRelative();
@@ -237,39 +262,44 @@ gumAttachmentWrappers.Add(wrapperForAttachment);
             }
             SpriteInstance.Texture = PlayerSprite;
             SpriteInstance.TextureScale = 1f;
-            if (mPlayerSwordAxisAlignedRectangleInstance.Parent == null)
+            if (mSwordCollision.Parent == null)
             {
-                mPlayerSwordAxisAlignedRectangleInstance.CopyAbsoluteToRelative();
-                mPlayerSwordAxisAlignedRectangleInstance.AttachTo(this, false);
+                mSwordCollision.CopyAbsoluteToRelative();
+                mSwordCollision.AttachTo(this, false);
             }
-            PlayerSwordAxisAlignedRectangleInstance.Width = 21f;
-            PlayerSwordAxisAlignedRectangleInstance.Height = 3f;
+            if (SwordCollision.Parent == null)
+            {
+                SwordCollision.RotationZ = -0.7853982f;
+            }
+            else
+            {
+                SwordCollision.RelativeRotationZ = -0.7853982f;
+            }
+            FlatRedBall.Math.Geometry.Point[] SwordCollisionPoints = new FlatRedBall.Math.Geometry.Point[] {new FlatRedBall.Math.Geometry.Point(0, 2), new FlatRedBall.Math.Geometry.Point(22, 2), new FlatRedBall.Math.Geometry.Point(25, 0), new FlatRedBall.Math.Geometry.Point(25, 0), new FlatRedBall.Math.Geometry.Point(22, -2), new FlatRedBall.Math.Geometry.Point(0, -2), new FlatRedBall.Math.Geometry.Point(0, 2) };
+            SwordCollision.Points = SwordCollisionPoints;
             mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
-            Collision.AxisAlignedRectangles.AddOneWay(mAxisAlignedRectangleInstance);
+            Collision.AxisAlignedRectangles.AddOneWay(mBodyCollision);
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
         }
         public virtual void AddToManagersBottomUp (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
+            CurrentHealth = MaxHealth;
             AssignCustomVariables(false);
         }
         public virtual void RemoveFromManagers () 
         {
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(this);
-            if (AxisAlignedRectangleInstance != null)
+            if (BodyCollision != null)
             {
-                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(AxisAlignedRectangleInstance);
+                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(BodyCollision);
             }
             if (SpriteInstance != null)
             {
                 FlatRedBall.SpriteManager.RemoveSpriteOneWay(SpriteInstance);
             }
-            if (HealthBarRuntimeInstance != null)
+            if (SwordCollision != null)
             {
-                HealthBarRuntimeInstance.RemoveFromManagers();
-            }
-            if (PlayerSwordAxisAlignedRectangleInstance != null)
-            {
-                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(PlayerSwordAxisAlignedRectangleInstance);
+                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(SwordCollision);
             }
             mGeneratedCollision.RemoveFromManagers(clearThis: false);
         }
@@ -278,29 +308,38 @@ gumAttachmentWrappers.Add(wrapperForAttachment);
             if (callOnContainedElements)
             {
             }
-            if (AxisAlignedRectangleInstance.Parent == null)
+            if (BodyCollision.Parent == null)
             {
-                AxisAlignedRectangleInstance.X = 0f;
+                BodyCollision.X = 0f;
             }
             else
             {
-                AxisAlignedRectangleInstance.RelativeX = 0f;
+                BodyCollision.RelativeX = 0f;
             }
-            if (AxisAlignedRectangleInstance.Parent == null)
+            if (BodyCollision.Parent == null)
             {
-                AxisAlignedRectangleInstance.Y = 0f;
+                BodyCollision.Y = 0f;
             }
             else
             {
-                AxisAlignedRectangleInstance.RelativeY = 0f;
+                BodyCollision.RelativeY = 0f;
             }
-            AxisAlignedRectangleInstance.Width = 16f;
-            AxisAlignedRectangleInstance.Height = 24f;
+            BodyCollision.Width = 16f;
+            BodyCollision.Height = 16f;
             SpriteInstance.Texture = PlayerSprite;
             SpriteInstance.TextureScale = 1f;
-            PlayerSwordAxisAlignedRectangleInstance.Width = 21f;
-            PlayerSwordAxisAlignedRectangleInstance.Height = 3f;
-            StartingHealth = 3;
+            if (SwordCollision.Parent == null)
+            {
+                SwordCollision.RotationZ = -0.7853982f;
+            }
+            else
+            {
+                SwordCollision.RelativeRotationZ = -0.7853982f;
+            }
+            SecondsBetweenDamage = 0;
+            DamageToDeal = 1m;
+            MaxHealth = 5m;
+            TeamIndex = 0;
         }
         public virtual void ConvertToManuallyUpdated () 
         {
@@ -458,9 +497,9 @@ gumAttachmentWrappers.Add(wrapperForAttachment);
         public virtual void SetToIgnorePausing () 
         {
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(this);
-            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(AxisAlignedRectangleInstance);
+            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(BodyCollision);
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(SpriteInstance);
-            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(PlayerSwordAxisAlignedRectangleInstance);
+            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(SwordCollision);
         }
         
         #region Top-Down Methods    
@@ -659,9 +698,9 @@ gumAttachmentWrappers.Add(wrapperForAttachment);
             var layerToRemoveFrom = LayerProvidedByContainer;
             if (layerToRemoveFrom != null)
             {
-                layerToRemoveFrom.Remove(AxisAlignedRectangleInstance);
+                layerToRemoveFrom.Remove(BodyCollision);
             }
-            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(AxisAlignedRectangleInstance, layerToMoveTo);
+            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(BodyCollision, layerToMoveTo);
             if (layerToRemoveFrom != null)
             {
                 layerToRemoveFrom.Remove(SpriteInstance);
@@ -672,14 +711,9 @@ gumAttachmentWrappers.Add(wrapperForAttachment);
             }
             if (layerToRemoveFrom != null)
             {
-                // No remove call, just a move. Comment is for the code generator;
+                layerToRemoveFrom.Remove(SwordCollision);
             }
-            HealthBarRuntimeInstance.MoveToFrbLayer(layerToMoveTo, FlatRedBall.Gum.GumIdb.Self);;
-            if (layerToRemoveFrom != null)
-            {
-                layerToRemoveFrom.Remove(PlayerSwordAxisAlignedRectangleInstance);
-            }
-            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(PlayerSwordAxisAlignedRectangleInstance, layerToMoveTo);
+            FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(SwordCollision, layerToMoveTo);
             LayerProvidedByContainer = layerToMoveTo;
         }
         partial void CustomActivityEditMode();

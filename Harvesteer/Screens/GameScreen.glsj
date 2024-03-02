@@ -34,6 +34,24 @@
           ],
           "InstructionSaves": [
             {
+              "Type": "decimal",
+              "Member": "DamageToDeal",
+              "Value": 1.0,
+              "Time": 0.0
+            },
+            {
+              "Type": "decimal",
+              "Member": "MaxHealth",
+              "Value": 5.0,
+              "Time": 0.0
+            },
+            {
+              "Type": "int",
+              "Member": "StartingHealth",
+              "Value": -21,
+              "Time": 0.0
+            },
+            {
               "Type": "float",
               "Member": "X",
               "Value": 200.0,
@@ -49,6 +67,12 @@
               "Type": "float",
               "Member": "Z",
               "Value": 0.0,
+              "Time": 0.0
+            },
+            {
+              "Type": "double",
+              "Member": "SecondsBetweenDamage",
+              "Value": 1.0,
               "Time": 0.0
             }
           ],
@@ -244,12 +268,12 @@
         },
         {
           "Name": "IsDealDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
         },
         {
           "Name": "IsDestroyFirstOnDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
         },
         {
@@ -269,7 +293,7 @@
       "GenerateTimedEmit": true
     },
     {
-      "InstanceName": "PlayerAxisAlignedRectangleInstanceVsEnemy",
+      "InstanceName": "PlayerBodyCollisionVsEnemy",
       "SourceClassType": "FlatRedBall.Math.Collision.ListVsListRelationship<Entities.Player, Entities.Enemy>",
       "Properties": [
         {
@@ -293,16 +317,6 @@
           "Type": "String"
         },
         {
-          "Name": "FirstSubCollisionSelectedItem",
-          "Value": "AxisAlignedRectangleInstance",
-          "Type": "String"
-        },
-        {
-          "Name": "SecondSubCollisionSelectedItem",
-          "Value": "<Entire Object>",
-          "Type": "String"
-        },
-        {
           "Name": "IsCollisionActive",
           "Value": true,
           "Type": "bool"
@@ -319,7 +333,7 @@
         },
         {
           "Name": "SecondCollisionMass",
-          "Value": 1.0,
+          "Value": 0.25,
           "Type": "float"
         },
         {
@@ -333,19 +347,34 @@
           "Type": "float"
         },
         {
+          "Name": "FirstSubCollisionSelectedItem",
+          "Value": "BodyCollision",
+          "Type": "String"
+        },
+        {
+          "Name": "SecondSubCollisionSelectedItem",
+          "Value": "<Entire Object>",
+          "Type": "String"
+        },
+        {
           "Name": "IsDealDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
         },
         {
           "Name": "IsDestroyFirstOnDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
         },
         {
           "Name": "IsDestroySecondOnDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
+        },
+        {
+          "Name": "CollisionType",
+          "Value": 1,
+          "Type": "int"
         }
       ],
       "InstructionSaves": [],
@@ -355,7 +384,7 @@
       "GenerateTimedEmit": true
     },
     {
-      "InstanceName": "PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy",
+      "InstanceName": "PlayerSwordCollisionVsEnemy",
       "SourceClassType": "FlatRedBall.Math.Collision.ListVsListRelationship<Entities.Player, Entities.Enemy>",
       "Properties": [
         {
@@ -410,7 +439,7 @@
         },
         {
           "Name": "FirstSubCollisionSelectedItem",
-          "Value": "PlayerSwordAxisAlignedRectangleInstance",
+          "Value": "SwordCollision",
           "Type": "String"
         },
         {
@@ -420,17 +449,17 @@
         },
         {
           "Name": "IsDealDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
         },
         {
           "Name": "IsDestroyFirstOnDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
         },
         {
           "Name": "IsDestroySecondOnDamageChecked",
-          "Value": true,
+          "Value": false,
           "Type": "Object"
         }
       ],
@@ -460,13 +489,13 @@
   "Name": "Screens\\GameScreen",
   "Events": [
     {
-      "EventName": "PlayerVsEnemyCollided",
-      "SourceObject": "PlayerAxisAlignedRectangleInstanceVsEnemy",
+      "EventName": "PlayerAxisAlignedRectangleInstanceVsEnemyCollided",
+      "SourceObject": "PlayerBodyCollisionVsEnemy",
       "SourceObjectEvent": "CollisionOccurred"
     },
     {
-      "EventName": "PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollided",
-      "SourceObject": "PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemy",
+      "EventName": "PlayerSwordCollisionVsEnemyCollided",
+      "SourceObject": "PlayerSwordCollisionVsEnemy",
       "SourceObjectEvent": "CollisionOccurred"
     }
   ],

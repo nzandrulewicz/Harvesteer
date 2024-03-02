@@ -35,6 +35,13 @@
         "ElementType": "Components",
         "EventType": 7,
         "TimestampUtc": "2024-02-22T01:20:07.6243831Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "HealthBar",
+        "ElementType": "Components",
+        "EventType": 1,
+        "TimestampUtc": "2024-03-02T01:59:41.857033Z"
       }
     ]
   }

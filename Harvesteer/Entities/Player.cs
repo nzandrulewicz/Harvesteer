@@ -9,44 +9,24 @@ using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using Microsoft.Xna.Framework;
+using FlatRedBall.Gui;
+using System.Diagnostics;
+using FlatRedBall.Math;
 
 namespace Harvesteer.Entities
 {
     public partial class Player
     {
-        int iHealth;
-
-        public int Health
-        {
-            get
-            {
-                return iHealth;
-            }
-            set
-            {
-                iHealth = value;
-
-                // Determine the percentage of health the player has left.
-                HealthBarRuntimeInstance.PercentFull = 100 * Health / (float)StartingHealth;
-
-                // If iHealth is less than or equal to 0
-                if (iHealth <= 0)
-                {
-                    // Run the Destory function
-                    Destroy();
-                }
-            }
-        }
-
         private void CustomInitialize()
         {
-            Health = StartingHealth;
         }
 
         private void CustomActivity()
         {
-            getMousePosition();
-
+            if (InputManager.Mouse.ButtonPushed(Mouse.MouseButtons.LeftButton))
+            {
+                useSword();
+            }
         }
 
         private void CustomDestroy()
@@ -61,12 +41,18 @@ namespace Harvesteer.Entities
 
         }
 
-        void getMousePosition()
+        void useSword()
         {
-            FlatRedBall.Gui.Cursor cursor = FlatRedBall.Gui.GuiManager.Cursor;
+            //Debug.WriteLine("MOUSE BUTTON CLICKED");
+            //this.SwordCollision.RelativeRotationZVelocity = -10;
 
-            FlatRedBall.Debugging.Debugger.Write($"{cursor.ScreenX}, {cursor.ScreenY}");
+            var differenceVector = GuiManager.Cursor.WorldPosition.ToVector3() - this.Position;
+            var angleInDegrees = differenceVector.AngleDegreesOrZero();
+            var angleRoundedTo90Degrees = MathFunctions.RoundFloat(angleInDegrees, 90);
+            var startSwingAngle = angleRoundedTo90Degrees + 45;
+            var angleRoundedBackInRadians = MathHelper.ToRadians(startSwingAngle);
+
+            SwordCollision.RelativeRotationZ = angleRoundedBackInRadians;
         }
-
     }
 }

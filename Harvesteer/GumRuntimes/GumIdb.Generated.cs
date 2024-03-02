@@ -50,7 +50,6 @@ namespace FlatRedBall.Gum
             GumRuntime.ElementSaveExtensions.RegisterGueInstantiationType("Elements/PercentBar", typeof(Harvesteer.GumRuntimes.Elements.PercentBarRuntime));
             GumRuntime.ElementSaveExtensions.RegisterGueInstantiationType("Elements/PercentBarIcon", typeof(Harvesteer.GumRuntimes.Elements.PercentBarIconRuntime));
             GumRuntime.ElementSaveExtensions.RegisterGueInstantiationType("Elements/VerticalLines", typeof(Harvesteer.GumRuntimes.Elements.VerticalLinesRuntime));
-            GumRuntime.ElementSaveExtensions.RegisterGueInstantiationType("HealthBar", typeof(Harvesteer.GumRuntimes.HealthBarRuntime));
             
             FlatRedBall.Forms.Controls.FrameworkElement.DefaultFormsComponents[typeof(FlatRedBall.Forms.Controls.Button)] = typeof(Harvesteer.GumRuntimes.Controls.ButtonStandardRuntime);
             FlatRedBall.Forms.Controls.FrameworkElement.DefaultFormsComponents[typeof(FlatRedBall.Forms.Controls.CheckBox)] = typeof(Harvesteer.GumRuntimes.Controls.CheckBoxRuntime);

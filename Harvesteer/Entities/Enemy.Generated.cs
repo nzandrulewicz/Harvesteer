@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace Harvesteer.Entities
 {
-    public partial class Enemy : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable, FlatRedBall.Entities.IEntity, FlatRedBall.Math.Geometry.ICollidable
+    public partial class Enemy : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable, FlatRedBall.Entities.IEntity, FlatRedBall.Math.Geometry.ICollidable, FlatRedBall.Entities.IDamageArea, FlatRedBall.Entities.IDamageable
     {
         // This is made static so that static lazy-loaded content can access it.
         public static string ContentManagerName { get; set; }
@@ -41,6 +41,54 @@ namespace Harvesteer.Entities
             }
         }
         private FlatRedBall.Sprite SpriteInstance;
+        private int mTeamIndex = 1;
+        public virtual int TeamIndex
+        {
+            set
+            {
+                mTeamIndex = value;
+            }
+            get
+            {
+                return mTeamIndex;
+            }
+        }
+        private System.Double mSecondsBetweenDamage = 1;
+        public virtual System.Double SecondsBetweenDamage
+        {
+            set
+            {
+                mSecondsBetweenDamage = value;
+            }
+            get
+            {
+                return mSecondsBetweenDamage;
+            }
+        }
+        private decimal mDamageToDeal = 1m;
+        public virtual decimal DamageToDeal
+        {
+            set
+            {
+                mDamageToDeal = value;
+            }
+            get
+            {
+                return mDamageToDeal;
+            }
+        }
+        private decimal mMaxHealth = 3m;
+        public virtual decimal MaxHealth
+        {
+            set
+            {
+                mMaxHealth = value;
+            }
+            get
+            {
+                return mMaxHealth;
+            }
+        }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
         public FlatRedBall.Math.Geometry.ShapeCollection Collision
         {
@@ -53,6 +101,21 @@ namespace Harvesteer.Entities
         public HashSet<string> LastFrameItemsCollidedAgainst { get; private set;} = new HashSet<string>();
         public HashSet<object> ObjectsCollidedAgainst { get; private set;} = new HashSet<object>();
         public HashSet<object> LastFrameObjectsCollidedAgainst { get; private set;} = new HashSet<object>();
+        public Action<decimal, FlatRedBall.Entities.IDamageable> ReactToDamageDealt { get; set; }
+        public Func<decimal, FlatRedBall.Entities.IDamageable, decimal> ModifyDamageDealt { get; set; }
+        public object DamageDealer { get; set; }
+        public event Action Destroyed;
+        public Action<decimal, FlatRedBall.Entities.IDamageable> KilledDamageable { get; set; }
+        public Action<FlatRedBall.Entities.IDamageable> RemovedByCollision { get; set; }
+        public bool IsDamageDealingEnabled { get; set; } = true;
+        public System.Collections.Generic.Dictionary<FlatRedBall.Entities.IDamageArea, double> DamageAreaLastDamage { get; set; } = new System.Collections.Generic.Dictionary<FlatRedBall.Entities.IDamageArea, double>();
+        public Action<decimal, FlatRedBall.Entities.IDamageArea> ReactToDamageReceived { get; set; }
+        public Func<decimal, FlatRedBall.Entities.IDamageArea, decimal> ModifyDamageReceived { get; set; }
+        public decimal CurrentHealth { get; set; }
+        public Action<decimal, FlatRedBall.Entities.IDamageArea> Died { get; set; }
+        public bool IsDamageReceivingEnabled { get; set; } = true;
+        public double InvulnerabilityTimeAfterDamage { get; set; } = 0;
+        public double LastDamageTime { get; set; } = -999;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
         public Enemy () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
@@ -129,6 +192,7 @@ namespace Harvesteer.Entities
                 FlatRedBall.SpriteManager.RemoveSpriteOneWay(SpriteInstance);
             }
             mGeneratedCollision.RemoveFromManagers(clearThis: true);
+            Destroyed?.Invoke();
             CustomDestroy();
         }
         public virtual void PostInitialize () 
@@ -154,6 +218,7 @@ namespace Harvesteer.Entities
         }
         public virtual void AddToManagersBottomUp (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
+            CurrentHealth = MaxHealth;
             AssignCustomVariables(false);
         }
         public virtual void RemoveFromManagers () 
@@ -177,6 +242,10 @@ namespace Harvesteer.Entities
             CircleInstance.Radius = 6f;
             SpriteInstance.Texture = BlueFrog;
             SpriteInstance.TextureScale = 1f;
+            TeamIndex = 1;
+            SecondsBetweenDamage = 1;
+            DamageToDeal = 1m;
+            MaxHealth = 3m;
         }
         public virtual void ConvertToManuallyUpdated () 
         {

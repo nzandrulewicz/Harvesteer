@@ -27,7 +27,10 @@ namespace Harvesteer.Screens
 
         void CustomActivity(bool firstTimeCalled)
         {
-
+            for (int i = 0; i < EnemyList.Count; i++)
+            {
+                EnemyList[i].Velocity = (Player1.Position - EnemyList[i].Position).AtLength(40);
+            }
         }
 
         void CustomDestroy()

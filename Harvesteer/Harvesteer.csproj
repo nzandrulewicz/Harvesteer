@@ -179,10 +179,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>verticallines</Name>
     </None>
-    <None Include="content\gumproject\components\healthbar.gucx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>healthbar</Name>
-    </None>
     <None Include="content\gumproject\fontcache\font10arial.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>font10arial</Name>
@@ -510,10 +506,6 @@
       <DependentUpon>VerticalLinesRuntime.cs</DependentUpon>
     </Compile>
     <Compile Include="GumRuntimes\GumIdb.Generated.cs" />
-    <Compile Include="GumRuntimes\HealthBarRuntime.cs" />
-    <Compile Include="GumRuntimes\HealthBarRuntime.Generated.cs">
-      <DependentUpon>HealthBarRuntime.cs</DependentUpon>
-    </Compile>
     <Compile Include="GumRuntimes\NineSliceRuntime.Generated.cs" />
     <Compile Include="GumRuntimes\PolygonRuntime.Generated.cs" />
     <Compile Include="GumRuntimes\RectangleRuntime.Generated.cs" />

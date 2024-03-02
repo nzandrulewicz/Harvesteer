@@ -12,18 +12,18 @@ namespace Harvesteer.Screens
 {
     public partial class GameScreen
     {
-        void OnPlayerVsEnemyCollidedTunnel (Entities.Player player, Entities.Enemy enemy) 
+        void OnPlayerAxisAlignedRectangleInstanceVsEnemyCollidedTunnel (Entities.Player player, Entities.Enemy enemy) 
         {
-            if (this.PlayerVsEnemyCollided != null)
+            if (this.PlayerAxisAlignedRectangleInstanceVsEnemyCollided != null)
             {
-                PlayerVsEnemyCollided(player, enemy);
+                PlayerAxisAlignedRectangleInstanceVsEnemyCollided(player, enemy);
             }
         }
-        void OnPlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollidedTunnel (Entities.Player player, Entities.Enemy enemy) 
+        void OnPlayerSwordCollisionVsEnemyCollidedTunnel (Entities.Player player, Entities.Enemy enemy) 
         {
-            if (this.PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollided != null)
+            if (this.PlayerSwordCollisionVsEnemyCollided != null)
             {
-                PlayerPlayerSwordAxisAlignedRectangleInstanceVsEnemyCollided(player, enemy);
+                PlayerSwordCollisionVsEnemyCollided(player, enemy);
             }
         }
     }

@@ -58,12 +58,68 @@
       "Properties": [
         {
           "Name": "Type",
-          "Value": "int",
+          "Value": "double",
           "Type": "String"
+        },
+        {
+          "Name": "CreatesProperties",
+          "Value": true,
+          "Type": "bool"
         }
       ],
-      "Name": "StartingHealth",
-      "DefaultValue": 3,
+      "Name": "SecondsBetweenDamage",
+      "DefaultValue": 0.0,
+      "SetByDerived": true
+    },
+    {
+      "Properties": [
+        {
+          "Name": "Type",
+          "Value": "decimal",
+          "Type": "String"
+        },
+        {
+          "Name": "CreatesProperties",
+          "Value": true,
+          "Type": "bool"
+        }
+      ],
+      "Name": "DamageToDeal",
+      "DefaultValue": 1.0,
+      "SetByDerived": true
+    },
+    {
+      "Properties": [
+        {
+          "Name": "Type",
+          "Value": "decimal",
+          "Type": "String"
+        },
+        {
+          "Name": "CreatesProperties",
+          "Value": true,
+          "Type": "bool"
+        }
+      ],
+      "Name": "MaxHealth",
+      "DefaultValue": 5.0,
+      "SetByDerived": true
+    },
+    {
+      "Properties": [
+        {
+          "Name": "Type",
+          "Value": "int",
+          "Type": "String"
+        },
+        {
+          "Name": "CreatesProperties",
+          "Value": true,
+          "Type": "bool"
+        }
+      ],
+      "Name": "TeamIndex",
+      "DefaultValue": 0,
       "SetByDerived": true
     }
   ],
@@ -82,11 +138,21 @@
       "Name": "IsTopDown",
       "Value": true,
       "Type": "bool"
+    },
+    {
+      "Name": "ImplementsIDamageArea",
+      "Value": true,
+      "Type": "Object"
+    },
+    {
+      "Name": "ImplementsIDamageable",
+      "Value": true,
+      "Type": "Object"
     }
   ],
   "NamedObjects": [
     {
-      "InstanceName": "AxisAlignedRectangleInstance",
+      "InstanceName": "BodyCollision",
       "SourceClassType": "FlatRedBall.Math.Geometry.AxisAlignedRectangle",
       "Properties": [
         {
@@ -99,7 +165,7 @@
         {
           "Type": "float",
           "Member": "Height",
-          "Value": 24.0,
+          "Value": 16.0,
           "Time": 0.0
         },
         {
@@ -157,24 +223,8 @@
       "GenerateTimedEmit": true
     },
     {
-      "InstanceName": "HealthBarRuntimeInstance",
-      "SourceClassType": "Harvesteer.GumRuntimes.HealthBarRuntime",
-      "Properties": [
-        {
-          "Name": "AssociateWithFactory",
-          "Value": true,
-          "Type": "bool"
-        }
-      ],
-      "InstructionSaves": [],
-      "SourceType": 3,
-      "SourceFile": "HealthBarRuntime",
-      "AttachToContainer": true,
-      "GenerateTimedEmit": true
-    },
-    {
-      "InstanceName": "PlayerSwordAxisAlignedRectangleInstance",
-      "SourceClassType": "FlatRedBall.Math.Geometry.AxisAlignedRectangle",
+      "InstanceName": "SwordCollision",
+      "SourceClassType": "FlatRedBall.Math.Geometry.Polygon",
       "Properties": [
         {
           "Name": "AssociateWithFactory",
@@ -184,20 +234,28 @@
       ],
       "InstructionSaves": [
         {
-          "Type": "float",
-          "Member": "Width",
-          "Value": 21.0,
+          "Type": "List<Vector2>",
+          "Member": "Points",
+          "Value": [
+            "0, 2",
+            "22, 2",
+            "25, 0",
+            "25, 0",
+            "22, -2",
+            "0, -2",
+            "0, 2"
+          ],
           "Time": 0.0
         },
         {
           "Type": "float",
-          "Member": "Height",
-          "Value": 3.0,
+          "Member": "RotationZ",
+          "Value": -0.7853982,
           "Time": 0.0
         }
       ],
       "SourceType": 2,
-      "SourceFile": "AxisAlignedRectangle",
+      "SourceFile": "Polygon",
       "HasPublicProperty": true,
       "AttachToContainer": true,
       "GenerateTimedEmit": true,
