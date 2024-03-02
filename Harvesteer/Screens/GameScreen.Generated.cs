@@ -202,6 +202,7 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             }
             Player1.DamageToDeal = 1m;
             Player1.MaxHealth = 5m;
+            Player1.SecondsBetweenDamage = 0.25;
             if (Player1.Parent == null)
             {
                 Player1.X = 200f;
@@ -226,7 +227,6 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             {
                 Player1.RelativeZ = 0f;
             }
-            Player1.SecondsBetweenDamage = 1;
             if (Map!= null)
             {
                 if (Map.Parent == null)
@@ -242,6 +242,8 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             {
                 SolidCollision.Visible = true;
             }
+            EnemySpawner1.EnemiesPerSecond = 0.02f;
+            EnemySpawner1.SpawnRateIncrease = 0.015f;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
         }
         public virtual void AddToManagersBottomUp () 
@@ -270,6 +272,7 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             }
             Player1.DamageToDeal = 1m;
             Player1.MaxHealth = 5m;
+            Player1.SecondsBetweenDamage = 0.25;
             if (Player1.Parent == null)
             {
                 Player1.X = 200f;
@@ -294,7 +297,6 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             {
                 Player1.RelativeZ = 0f;
             }
-            Player1.SecondsBetweenDamage = 1;
             if (Map != null)
             {
                 if (Map.Parent == null)
@@ -310,6 +312,8 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             {
                 SolidCollision.Visible = true;
             }
+            EnemySpawner1.EnemiesPerSecond = 0.02f;
+            EnemySpawner1.SpawnRateIncrease = 0.015f;
         }
         public virtual void ConvertToManuallyUpdated () 
         {

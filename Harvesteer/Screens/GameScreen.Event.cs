@@ -40,7 +40,7 @@ namespace Harvesteer.Screens
         void OnPlayerSwordCollisionVsEnemyCollided (Entities.Player player, Entities.Enemy enemy) 
         {
             // If the logic of damage to Enemy is allowed...
-            if (enemy.ShouldTakeDamage(player))
+            if (player.IsAttackActive && enemy.ShouldTakeDamage(player))
             {
                 // Enemy loses health point(s)
                 enemy.TakeDamage(player);

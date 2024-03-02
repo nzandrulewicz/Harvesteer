@@ -17,16 +17,26 @@ namespace Harvesteer.Entities
 {
     public partial class Player
     {
+        double LastTimeAttackStarted = -999;
+        double AttackDamageDuration = .25;
+        double AttackCooldown = .5;
+
+        public bool CanAttack => TimeManager.SecondsSince(LastTimeAttackStarted) > AttackCooldown;
+        public bool IsAttackActive => TimeManager.SecondsSince(LastTimeAttackStarted) < AttackDamageDuration;
+
         private void CustomInitialize()
         {
+
         }
 
         private void CustomActivity()
         {
-            if (InputManager.Mouse.ButtonPushed(Mouse.MouseButtons.LeftButton))
+            if (InputManager.Mouse.ButtonPushed(Mouse.MouseButtons.LeftButton) && CanAttack)
             {
                 useSword();
             }
+
+            SwordCollision.Visible = IsAttackActive;
         }
 
         private void CustomDestroy()
@@ -44,15 +54,16 @@ namespace Harvesteer.Entities
         void useSword()
         {
             //Debug.WriteLine("MOUSE BUTTON CLICKED");
-            //this.SwordCollision.RelativeRotationZVelocity = -10;
+            LastTimeAttackStarted = TimeManager.CurrentScreenTime;
 
             var differenceVector = GuiManager.Cursor.WorldPosition.ToVector3() - this.Position;
             var angleInDegrees = differenceVector.AngleDegreesOrZero();
             var angleRoundedTo90Degrees = MathFunctions.RoundFloat(angleInDegrees, 90);
-            var startSwingAngle = angleRoundedTo90Degrees + 45;
-            var angleRoundedBackInRadians = MathHelper.ToRadians(startSwingAngle);
+            var startSwingAngleDegrees = angleRoundedTo90Degrees;
+            var angleRoundedBackInRadians = MathHelper.ToRadians(startSwingAngleDegrees);
 
-            SwordCollision.RelativeRotationZ = angleRoundedBackInRadians;
+            this.SwordCollision.RelativeRotationZ = angleRoundedBackInRadians;
+
         }
     }
 }

@@ -46,6 +46,12 @@
               "Time": 0.0
             },
             {
+              "Type": "double",
+              "Member": "SecondsBetweenDamage",
+              "Value": 0.25,
+              "Time": 0.0
+            },
+            {
               "Type": "int",
               "Member": "StartingHealth",
               "Value": -21,
@@ -67,12 +73,6 @@
               "Type": "float",
               "Member": "Z",
               "Value": 0.0,
-              "Time": 0.0
-            },
-            {
-              "Type": "double",
-              "Member": "SecondsBetweenDamage",
-              "Value": 1.0,
               "Time": 0.0
             }
           ],
@@ -479,7 +479,20 @@
           "Type": "bool"
         }
       ],
-      "InstructionSaves": [],
+      "InstructionSaves": [
+        {
+          "Type": "float",
+          "Member": "EnemiesPerSecond",
+          "Value": 0.02,
+          "Time": 0.0
+        },
+        {
+          "Type": "float",
+          "Member": "SpawnRateIncrease",
+          "Value": 0.015,
+          "Time": 0.0
+        }
+      ],
       "SourceType": 1,
       "SourceFile": "Entities/EnemySpawner",
       "AttachToContainer": true,

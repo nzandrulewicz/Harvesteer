@@ -275,7 +275,7 @@ namespace Harvesteer.Entities
             {
                 SwordCollision.RelativeRotationZ = -0.7853982f;
             }
-            FlatRedBall.Math.Geometry.Point[] SwordCollisionPoints = new FlatRedBall.Math.Geometry.Point[] {new FlatRedBall.Math.Geometry.Point(0, 2), new FlatRedBall.Math.Geometry.Point(22, 2), new FlatRedBall.Math.Geometry.Point(25, 0), new FlatRedBall.Math.Geometry.Point(25, 0), new FlatRedBall.Math.Geometry.Point(22, -2), new FlatRedBall.Math.Geometry.Point(0, -2), new FlatRedBall.Math.Geometry.Point(0, 2) };
+            FlatRedBall.Math.Geometry.Point[] SwordCollisionPoints = new FlatRedBall.Math.Geometry.Point[] {new FlatRedBall.Math.Geometry.Point(0, 0), new FlatRedBall.Math.Geometry.Point(16, 16), new FlatRedBall.Math.Geometry.Point(19, 13), new FlatRedBall.Math.Geometry.Point(21, 10), new FlatRedBall.Math.Geometry.Point(23, 6), new FlatRedBall.Math.Geometry.Point(24, 0), new FlatRedBall.Math.Geometry.Point(23, -6), new FlatRedBall.Math.Geometry.Point(21, -10), new FlatRedBall.Math.Geometry.Point(19, -13), new FlatRedBall.Math.Geometry.Point(16, -16), new FlatRedBall.Math.Geometry.Point(0, 0) };
             SwordCollision.Points = SwordCollisionPoints;
             mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
             Collision.AxisAlignedRectangles.AddOneWay(mBodyCollision);
