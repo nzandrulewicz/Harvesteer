@@ -121,6 +121,32 @@
       "Name": "TeamIndex",
       "DefaultValue": 0,
       "SetByDerived": true
+    },
+    {
+      "Properties": [
+        {
+          "Name": "Type",
+          "Value": "double",
+          "Type": "String"
+        }
+      ],
+      "Name": "AttackDamageDuration",
+      "DefaultValue": 0.25,
+      "SetByDerived": true,
+      "Summary": "Determines how long in seconds the SwordCollision will be active when triggered"
+    },
+    {
+      "Properties": [
+        {
+          "Name": "Type",
+          "Value": "double",
+          "Type": "String"
+        }
+      ],
+      "Name": "AttackCooldown",
+      "DefaultValue": 0.5,
+      "SetByDerived": true,
+      "Summary": "Determines how long in seconds until the player can activate SwordCollision"
     }
   ],
   "Properties": [

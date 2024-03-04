@@ -20,6 +20,8 @@ namespace Harvesteer.Screens
         protected FlatRedBall.Math.PositionedObjectList<Harvesteer.Entities.Player> PlayerList = new FlatRedBall.Math.PositionedObjectList<Harvesteer.Entities.Player>();
         private Harvesteer.Entities.Player Player1;
         protected FlatRedBall.Math.PositionedObjectList<Harvesteer.Entities.Enemy> EnemyList = new FlatRedBall.Math.PositionedObjectList<Harvesteer.Entities.Enemy>();
+        protected FlatRedBall.Math.PositionedObjectList<Harvesteer.Entities.PlayerStats> PlayerStatsList = new FlatRedBall.Math.PositionedObjectList<Harvesteer.Entities.PlayerStats>();
+        private Harvesteer.Entities.PlayerStats PlayerStats1;
         protected FlatRedBall.TileGraphics.LayeredTileMap Map;
         protected FlatRedBall.TileCollisions.TileShapeCollection mSolidCollision;
         public FlatRedBall.TileCollisions.TileShapeCollection SolidCollision
@@ -48,6 +50,7 @@ namespace Harvesteer.Screens
         {
             PlayerList.Name = "PlayerList";
             EnemyList.Name = "EnemyList";
+            PlayerStatsList.Name = "PlayerStatsList";
             // Not instantiating for FlatRedBall.TileGraphics.LayeredTileMap Map in Screens\GameScreen (Screen) because properties on the object prevent it
             // Not instantiating for FlatRedBall.TileCollisions.TileShapeCollection SolidCollision in Screens\GameScreen (Screen) because properties on the object prevent it
         }
@@ -59,6 +62,10 @@ namespace Harvesteer.Screens
             Player1.Name = "Player1";
             Player1.CreationSource = "Glue";
             EnemyList?.Clear();
+            PlayerStatsList?.Clear();
+            PlayerStats1 = new Harvesteer.Entities.PlayerStats(ContentManagerName, false);
+            PlayerStats1.Name = "PlayerStats1";
+            PlayerStats1.CreationSource = "Glue";
             // Not instantiating for FlatRedBall.TileGraphics.LayeredTileMap Map in Screens\GameScreen (Screen) because properties on the object prevent it
             // Not instantiating for FlatRedBall.TileCollisions.TileShapeCollection SolidCollision in Screens\GameScreen (Screen) because properties on the object prevent it
             EnemySpawner1 = new Harvesteer.Entities.EnemySpawner(ContentManagerName, false);
@@ -102,6 +109,7 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             mTimeScreenWasCreated = FlatRedBall.TimeManager.CurrentTime;
             InitializeFactoriesAndSorting();
             Player1.AddToManagers(mLayer);
+            PlayerStats1.AddToManagers(mLayer);
             EnemySpawner1.AddToManagers(mLayer);
             var Map_gameplayLayer = Map.MapLayers.FindByName("GameplayLayer");
             if (Map_gameplayLayer != null)
@@ -137,6 +145,14 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
                         EnemyList[i].Activity();
                     }
                 }
+                for (int i = PlayerStatsList.Count - 1; i > -1; i--)
+                {
+                    if (i < PlayerStatsList.Count)
+                    {
+                        // We do the extra if-check because activity could destroy any number of entities
+                        PlayerStatsList[i].Activity();
+                    }
+                }
                 EnemySpawner1.Activity();
             }
             else
@@ -168,6 +184,7 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             base.Destroy();
             Factories.PlayerFactory.Destroy();
             Factories.EnemyFactory.Destroy();
+            Factories.PlayerStatsFactory.Destroy();
             
             for (int i = PlayerList.Count - 1; i > -1; i--)
             {
@@ -176,6 +193,10 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             for (int i = EnemyList.Count - 1; i > -1; i--)
             {
                 EnemyList[i].Destroy();
+            }
+            for (int i = PlayerStatsList.Count - 1; i > -1; i--)
+            {
+                PlayerStatsList[i].Destroy();
             }
             if (EnemySpawner1 != null)
             {
@@ -227,6 +248,10 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             {
                 Player1.RelativeZ = 0f;
             }
+            if (!PlayerStatsList.Contains(PlayerStats1))
+            {
+                PlayerStatsList.Add(PlayerStats1);
+            }
             if (Map!= null)
             {
                 if (Map.Parent == null)
@@ -261,6 +286,10 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             {
                 EnemyList[i].Destroy();
             }
+            for (int i = PlayerStatsList.Count - 1; i > -1; i--)
+            {
+                PlayerStatsList[i].Destroy();
+            }
             EnemySpawner1.RemoveFromManagers();
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
@@ -268,6 +297,7 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             if (callOnContainedElements)
             {
                 Player1.AssignCustomVariables(true);
+                PlayerStats1.AssignCustomVariables(true);
                 EnemySpawner1.AssignCustomVariables(true);
             }
             Player1.DamageToDeal = 1m;
@@ -325,6 +355,10 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
             {
                 EnemyList[i].ConvertToManuallyUpdated();
             }
+            for (int i = 0; i < PlayerStatsList.Count; i++)
+            {
+                PlayerStatsList[i].ConvertToManuallyUpdated();
+            }
             if (Map != null)
             {
             }
@@ -375,8 +409,10 @@ PlayerSwordCollisionVsEnemy.Name = "PlayerSwordCollisionVsEnemy";
         {
             Factories.PlayerFactory.Initialize(ContentManagerName);
             Factories.EnemyFactory.Initialize(ContentManagerName);
+            Factories.PlayerStatsFactory.Initialize(ContentManagerName);
             Factories.PlayerFactory.AddList(PlayerList);
             Factories.EnemyFactory.AddList(EnemyList);
+            Factories.PlayerStatsFactory.AddList(PlayerStatsList);
         }
         [System.Obsolete("Use GetFile instead")]
         public static object GetStaticMember (string memberName) 

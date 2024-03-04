@@ -24,7 +24,20 @@ namespace Harvesteer.Screens
                 // Player loses health point(s)
                 player.TakeDamage(enemy);
 
-                Debug.WriteLine("Player Health: " + player.CurrentHealth.ToString());
+                // Get decimal format of player's current health and max health
+                decimal playerCurrentHealth = player.CurrentHealth;
+                decimal playerMaxHealth = Convert.ToDecimal(player.MaxHealth);
+
+                // Calculate health percentage
+                var playerHealthPercentDecimal = 100 * playerCurrentHealth / playerMaxHealth;
+                // Convert health percentage back to float
+                var playerHealthPercentFloat = Convert.ToSingle(playerHealthPercentDecimal);
+
+                // Update the health bar to the current health percentage
+                PlayerStats1.HealthBarRuntimeInstance.PercentFull = playerHealthPercentFloat;
+
+                //Debug.WriteLine("PLAYER HEALTH: " + 100 * player.CurrentHealth / player.MaxHealth);
+                //Debug.WriteLine("Player Health: " + player.CurrentHealth.ToString());
             }
 
             // If Player's current health is depleted...
@@ -33,7 +46,7 @@ namespace Harvesteer.Screens
                 // Destory Player
                 player.Destroy();
 
-                Debug.WriteLine("Player Died");
+                //Debug.WriteLine("Player Died");
             }
         }
         
@@ -45,7 +58,7 @@ namespace Harvesteer.Screens
                 // Enemy loses health point(s)
                 enemy.TakeDamage(player);
 
-                Debug.WriteLine("Enemy Health: " + enemy.CurrentHealth.ToString());
+                //Debug.WriteLine("Enemy Health: " + enemy.CurrentHealth.ToString());
             }
 
             // If Enemy's current health is depleted...
@@ -54,7 +67,7 @@ namespace Harvesteer.Screens
                 // Destory Enemy
                 enemy.Destroy();
 
-                Debug.WriteLine("Enemy Died");
+                //Debug.WriteLine("Enemy Died");
             }
         }
 

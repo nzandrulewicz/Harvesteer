@@ -11,5 +11,8 @@
     <property name="DamageToDeal" type="float" default="1" />
     <property name="MaxHealth" type="float" default="5" />
     <property name="TeamIndex" type="int" default="0" />
+    <property name="AttackDamageDuration" type="float" default="0.25" />
+    <property name="AttackCooldown" type="float" default="0.5" />
   </objecttype>
+  <objecttype name="PlayerStats" />
 </objecttypes>

@@ -80,7 +80,7 @@ namespace Harvesteer.Entities
                 return mDamageToDeal;
             }
         }
-        private decimal mMaxHealth = 5m;
+        public decimal mMaxHealth = 5m;
         public virtual decimal MaxHealth
         {
             set
@@ -102,6 +102,36 @@ namespace Harvesteer.Entities
             get
             {
                 return mTeamIndex;
+            }
+        }
+        private System.Double mAttackDamageDuration = 0.25;
+        /// <summary>
+        /// Determines how long in seconds the SwordCollision will be active when triggered
+        /// </summary>
+        public virtual System.Double AttackDamageDuration
+        {
+            set
+            {
+                mAttackDamageDuration = value;
+            }
+            get
+            {
+                return mAttackDamageDuration;
+            }
+        }
+        private System.Double mAttackCooldown = 0.5;
+        /// <summary>
+        /// Determines how long in seconds until the player can activate SwordCollision
+        /// </summary>
+        public virtual System.Double AttackCooldown
+        {
+            set
+            {
+                mAttackCooldown = value;
+            }
+            get
+            {
+                return mAttackCooldown;
             }
         }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
@@ -340,6 +370,8 @@ namespace Harvesteer.Entities
             DamageToDeal = 1m;
             MaxHealth = 5m;
             TeamIndex = 0;
+            AttackDamageDuration = 0.25;
+            AttackCooldown = 0.5;
         }
         public virtual void ConvertToManuallyUpdated () 
         {

@@ -25,14 +25,14 @@ namespace Harvesteer.GumRuntimes
                 switch(mCurrentVariableState)
                 {
                     case  VariableState.Default:
-                        Height = 8f;
-                        Width = 40f;
-                        X = 0f;
+                        Height = 128f;
+                        Width = 16f;
+                        X = 440f;
                         XOrigin = RenderingLibrary.Graphics.HorizontalAlignment.Center;
-                        Y = -20f;
+                        Y = 380f;
                         YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Center;
-                        Background.Blue = 53;
-                        Background.Green = 49;
+                        Background.Blue = 0;
+                        Background.Green = 6;
                         Background.Height = 0f;
                         Background.HeightUnits = Gum.DataTypes.DimensionUnitType.RelativeToContainer;
                         Background.Red = 255;
@@ -44,19 +44,15 @@ namespace Harvesteer.GumRuntimes
                         Background.Y = 0f;
                         Background.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Center;
                         Background.YUnits = Gum.Converters.GeneralUnitType.PixelsFromMiddle;
-                        Foreground.Alpha = 255;
-                        Foreground.Blue = 0;
+                        Foreground.Blue = 5;
                         Foreground.Green = 255;
-                        Foreground.HasEvents = false;
-                        Foreground.Height = 0f;
-                        Foreground.HeightUnits = Gum.DataTypes.DimensionUnitType.RelativeToContainer;
-                        Foreground.Red = 124;
-                        Foreground.Width = 100f;
-                        Foreground.WidthUnits = Gum.DataTypes.DimensionUnitType.Percentage;
-                        Foreground.XOrigin = RenderingLibrary.Graphics.HorizontalAlignment.Left;
-                        Foreground.XUnits = Gum.Converters.GeneralUnitType.PixelsFromSmall;
-                        Foreground.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Center;
-                        Foreground.YUnits = Gum.Converters.GeneralUnitType.PixelsFromMiddle;
+                        Foreground.Height = 100f;
+                        Foreground.HeightUnits = Gum.DataTypes.DimensionUnitType.Percentage;
+                        Foreground.Red = 0;
+                        Foreground.Width = 16f;
+                        Foreground.X = 0f;
+                        Foreground.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Bottom;
+                        Foreground.YUnits = Gum.Converters.GeneralUnitType.PixelsFromLarge;
                         break;
                 }
             }
@@ -99,10 +95,6 @@ namespace Harvesteer.GumRuntimes
             bool setBackgroundYSecondValue = false;
             float BackgroundYFirstValue= 0;
             float BackgroundYSecondValue= 0;
-            bool setForegroundAlphaFirstValue = false;
-            bool setForegroundAlphaSecondValue = false;
-            int ForegroundAlphaFirstValue= 0;
-            int ForegroundAlphaSecondValue= 0;
             bool setForegroundBlueFirstValue = false;
             bool setForegroundBlueSecondValue = false;
             int ForegroundBlueFirstValue= 0;
@@ -123,6 +115,10 @@ namespace Harvesteer.GumRuntimes
             bool setForegroundWidthSecondValue = false;
             float ForegroundWidthFirstValue= 0;
             float ForegroundWidthSecondValue= 0;
+            bool setForegroundXFirstValue = false;
+            bool setForegroundXSecondValue = false;
+            float ForegroundXFirstValue= 0;
+            float ForegroundXSecondValue= 0;
             bool setHeightFirstValue = false;
             bool setHeightSecondValue = false;
             float HeightFirstValue= 0;
@@ -143,9 +139,9 @@ namespace Harvesteer.GumRuntimes
             {
                 case  VariableState.Default:
                     setBackgroundBlueFirstValue = true;
-                    BackgroundBlueFirstValue = 53;
+                    BackgroundBlueFirstValue = 0;
                     setBackgroundGreenFirstValue = true;
-                    BackgroundGreenFirstValue = 49;
+                    BackgroundGreenFirstValue = 6;
                     setBackgroundHeightFirstValue = true;
                     BackgroundHeightFirstValue = 0f;
                     if (interpolationValue < 1)
@@ -180,58 +176,42 @@ namespace Harvesteer.GumRuntimes
                     {
                         this.Background.YUnits = Gum.Converters.GeneralUnitType.PixelsFromMiddle;
                     }
-                    setForegroundAlphaFirstValue = true;
-                    ForegroundAlphaFirstValue = 255;
                     setForegroundBlueFirstValue = true;
-                    ForegroundBlueFirstValue = 0;
+                    ForegroundBlueFirstValue = 5;
                     setForegroundGreenFirstValue = true;
                     ForegroundGreenFirstValue = 255;
-                    if (interpolationValue < 1)
-                    {
-                        this.Foreground.HasEvents = false;
-                    }
                     setForegroundHeightFirstValue = true;
-                    ForegroundHeightFirstValue = 0f;
+                    ForegroundHeightFirstValue = 100f;
                     if (interpolationValue < 1)
                     {
-                        this.Foreground.HeightUnits = Gum.DataTypes.DimensionUnitType.RelativeToContainer;
+                        this.Foreground.HeightUnits = Gum.DataTypes.DimensionUnitType.Percentage;
                     }
                     setForegroundRedFirstValue = true;
-                    ForegroundRedFirstValue = 124;
+                    ForegroundRedFirstValue = 0;
                     setForegroundWidthFirstValue = true;
-                    ForegroundWidthFirstValue = 100f;
+                    ForegroundWidthFirstValue = 16f;
+                    setForegroundXFirstValue = true;
+                    ForegroundXFirstValue = 0f;
                     if (interpolationValue < 1)
                     {
-                        this.Foreground.WidthUnits = Gum.DataTypes.DimensionUnitType.Percentage;
+                        this.Foreground.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Bottom;
                     }
                     if (interpolationValue < 1)
                     {
-                        this.Foreground.XOrigin = RenderingLibrary.Graphics.HorizontalAlignment.Left;
-                    }
-                    if (interpolationValue < 1)
-                    {
-                        this.Foreground.XUnits = Gum.Converters.GeneralUnitType.PixelsFromSmall;
-                    }
-                    if (interpolationValue < 1)
-                    {
-                        this.Foreground.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Center;
-                    }
-                    if (interpolationValue < 1)
-                    {
-                        this.Foreground.YUnits = Gum.Converters.GeneralUnitType.PixelsFromMiddle;
+                        this.Foreground.YUnits = Gum.Converters.GeneralUnitType.PixelsFromLarge;
                     }
                     setHeightFirstValue = true;
-                    HeightFirstValue = 8f;
+                    HeightFirstValue = 128f;
                     setWidthFirstValue = true;
-                    WidthFirstValue = 40f;
+                    WidthFirstValue = 16f;
                     setXFirstValue = true;
-                    XFirstValue = 0f;
+                    XFirstValue = 440f;
                     if (interpolationValue < 1)
                     {
                         this.XOrigin = RenderingLibrary.Graphics.HorizontalAlignment.Center;
                     }
                     setYFirstValue = true;
-                    YFirstValue = -20f;
+                    YFirstValue = 380f;
                     if (interpolationValue < 1)
                     {
                         this.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Center;
@@ -242,9 +222,9 @@ namespace Harvesteer.GumRuntimes
             {
                 case  VariableState.Default:
                     setBackgroundBlueSecondValue = true;
-                    BackgroundBlueSecondValue = 53;
+                    BackgroundBlueSecondValue = 0;
                     setBackgroundGreenSecondValue = true;
-                    BackgroundGreenSecondValue = 49;
+                    BackgroundGreenSecondValue = 6;
                     setBackgroundHeightSecondValue = true;
                     BackgroundHeightSecondValue = 0f;
                     if (interpolationValue >= 1)
@@ -279,58 +259,42 @@ namespace Harvesteer.GumRuntimes
                     {
                         this.Background.YUnits = Gum.Converters.GeneralUnitType.PixelsFromMiddle;
                     }
-                    setForegroundAlphaSecondValue = true;
-                    ForegroundAlphaSecondValue = 255;
                     setForegroundBlueSecondValue = true;
-                    ForegroundBlueSecondValue = 0;
+                    ForegroundBlueSecondValue = 5;
                     setForegroundGreenSecondValue = true;
                     ForegroundGreenSecondValue = 255;
-                    if (interpolationValue >= 1)
-                    {
-                        this.Foreground.HasEvents = false;
-                    }
                     setForegroundHeightSecondValue = true;
-                    ForegroundHeightSecondValue = 0f;
+                    ForegroundHeightSecondValue = 100f;
                     if (interpolationValue >= 1)
                     {
-                        this.Foreground.HeightUnits = Gum.DataTypes.DimensionUnitType.RelativeToContainer;
+                        this.Foreground.HeightUnits = Gum.DataTypes.DimensionUnitType.Percentage;
                     }
                     setForegroundRedSecondValue = true;
-                    ForegroundRedSecondValue = 124;
+                    ForegroundRedSecondValue = 0;
                     setForegroundWidthSecondValue = true;
-                    ForegroundWidthSecondValue = 100f;
+                    ForegroundWidthSecondValue = 16f;
+                    setForegroundXSecondValue = true;
+                    ForegroundXSecondValue = 0f;
                     if (interpolationValue >= 1)
                     {
-                        this.Foreground.WidthUnits = Gum.DataTypes.DimensionUnitType.Percentage;
+                        this.Foreground.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Bottom;
                     }
                     if (interpolationValue >= 1)
                     {
-                        this.Foreground.XOrigin = RenderingLibrary.Graphics.HorizontalAlignment.Left;
-                    }
-                    if (interpolationValue >= 1)
-                    {
-                        this.Foreground.XUnits = Gum.Converters.GeneralUnitType.PixelsFromSmall;
-                    }
-                    if (interpolationValue >= 1)
-                    {
-                        this.Foreground.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Center;
-                    }
-                    if (interpolationValue >= 1)
-                    {
-                        this.Foreground.YUnits = Gum.Converters.GeneralUnitType.PixelsFromMiddle;
+                        this.Foreground.YUnits = Gum.Converters.GeneralUnitType.PixelsFromLarge;
                     }
                     setHeightSecondValue = true;
-                    HeightSecondValue = 8f;
+                    HeightSecondValue = 128f;
                     setWidthSecondValue = true;
-                    WidthSecondValue = 40f;
+                    WidthSecondValue = 16f;
                     setXSecondValue = true;
-                    XSecondValue = 0f;
+                    XSecondValue = 440f;
                     if (interpolationValue >= 1)
                     {
                         this.XOrigin = RenderingLibrary.Graphics.HorizontalAlignment.Center;
                     }
                     setYSecondValue = true;
-                    YSecondValue = -20f;
+                    YSecondValue = 380f;
                     if (interpolationValue >= 1)
                     {
                         this.YOrigin = RenderingLibrary.Graphics.VerticalAlignment.Center;
@@ -372,10 +336,6 @@ namespace Harvesteer.GumRuntimes
             {
                 Background.Y = BackgroundYFirstValue * (1 - interpolationValue) + BackgroundYSecondValue * interpolationValue;
             }
-            if (setForegroundAlphaFirstValue && setForegroundAlphaSecondValue)
-            {
-                Foreground.Alpha = FlatRedBall.Math.MathFunctions.RoundToInt(ForegroundAlphaFirstValue* (1 - interpolationValue) + ForegroundAlphaSecondValue * interpolationValue);
-            }
             if (setForegroundBlueFirstValue && setForegroundBlueSecondValue)
             {
                 Foreground.Blue = FlatRedBall.Math.MathFunctions.RoundToInt(ForegroundBlueFirstValue* (1 - interpolationValue) + ForegroundBlueSecondValue * interpolationValue);
@@ -395,6 +355,10 @@ namespace Harvesteer.GumRuntimes
             if (setForegroundWidthFirstValue && setForegroundWidthSecondValue)
             {
                 Foreground.Width = ForegroundWidthFirstValue * (1 - interpolationValue) + ForegroundWidthSecondValue * interpolationValue;
+            }
+            if (setForegroundXFirstValue && setForegroundXSecondValue)
+            {
+                Foreground.X = ForegroundXFirstValue * (1 - interpolationValue) + ForegroundXSecondValue * interpolationValue;
             }
             if (setHeightFirstValue && setHeightSecondValue)
             {
@@ -654,14 +618,6 @@ namespace Harvesteer.GumRuntimes
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
                     {
                         SetsValue = true,
-                        Name = "Foreground.Alpha",
-                        Type = "int",
-                        Value = Foreground.Alpha
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
                         Name = "Foreground.Blue",
                         Type = "int",
                         Value = Foreground.Blue
@@ -673,14 +629,6 @@ namespace Harvesteer.GumRuntimes
                         Name = "Foreground.Green",
                         Type = "int",
                         Value = Foreground.Green
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
-                        Name = "Foreground.HasEvents",
-                        Type = "bool",
-                        Value = Foreground.HasEvents
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -718,25 +666,9 @@ namespace Harvesteer.GumRuntimes
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
                     {
                         SetsValue = true,
-                        Name = "Foreground.Width Units",
-                        Type = "DimensionUnitType",
-                        Value = Foreground.WidthUnits
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
-                        Name = "Foreground.X Origin",
-                        Type = "HorizontalAlignment",
-                        Value = Foreground.XOrigin
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
-                        Name = "Foreground.X Units",
-                        Type = "PositionUnitType",
-                        Value = Foreground.XUnits
+                        Name = "Foreground.X",
+                        Type = "float",
+                        Value = Foreground.X
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -770,7 +702,7 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "Height",
                         Type = "float",
-                        Value = Height + 8f
+                        Value = Height + 128f
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -778,7 +710,7 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "Width",
                         Type = "float",
-                        Value = Width + 40f
+                        Value = Width + 16f
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -786,7 +718,7 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "X",
                         Type = "float",
-                        Value = X + 0f
+                        Value = X + 440f
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -802,7 +734,7 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "Y",
                         Type = "float",
-                        Value = Y + -20f
+                        Value = Y + 380f
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -818,7 +750,7 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "Background.Blue",
                         Type = "int",
-                        Value = Background.Blue + 53
+                        Value = Background.Blue + 0
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -826,7 +758,7 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "Background.Green",
                         Type = "int",
-                        Value = Background.Green + 49
+                        Value = Background.Green + 6
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -920,17 +852,9 @@ namespace Harvesteer.GumRuntimes
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
                     {
                         SetsValue = true,
-                        Name = "Foreground.Alpha",
-                        Type = "int",
-                        Value = Foreground.Alpha + 255
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
                         Name = "Foreground.Blue",
                         Type = "int",
-                        Value = Foreground.Blue + 0
+                        Value = Foreground.Blue + 5
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -944,17 +868,9 @@ namespace Harvesteer.GumRuntimes
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
                     {
                         SetsValue = true,
-                        Name = "Foreground.HasEvents",
-                        Type = "bool",
-                        Value = Foreground.HasEvents
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
                         Name = "Foreground.Height",
                         Type = "float",
-                        Value = Foreground.Height + 0f
+                        Value = Foreground.Height + 100f
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -970,7 +886,7 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "Foreground.Red",
                         Type = "int",
-                        Value = Foreground.Red + 124
+                        Value = Foreground.Red + 0
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -978,31 +894,15 @@ namespace Harvesteer.GumRuntimes
                         SetsValue = true,
                         Name = "Foreground.Width",
                         Type = "float",
-                        Value = Foreground.Width + 100f
+                        Value = Foreground.Width + 16f
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
                     {
                         SetsValue = true,
-                        Name = "Foreground.Width Units",
-                        Type = "DimensionUnitType",
-                        Value = Foreground.WidthUnits
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
-                        Name = "Foreground.X Origin",
-                        Type = "HorizontalAlignment",
-                        Value = Foreground.XOrigin
-                    }
-                    );
-                    newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
-                    {
-                        SetsValue = true,
-                        Name = "Foreground.X Units",
-                        Type = "PositionUnitType",
-                        Value = Foreground.XUnits
+                        Name = "Foreground.X",
+                        Type = "float",
+                        Value = Foreground.X + 0f
                     }
                     );
                     newState.Variables.Add(new Gum.DataTypes.Variables.VariableSave()
@@ -1045,13 +945,13 @@ namespace Harvesteer.GumRuntimes
         {
             get
             {
-                return Foreground.Width;
+                return Foreground.Height;
             }
             set
             {
-                if (Foreground.Width != value)
+                if (Foreground.Height != value)
                 {
-                    Foreground.Width = value;
+                    Foreground.Height = value;
                     PercentFullChanged?.Invoke(this, null);
                 }
             }

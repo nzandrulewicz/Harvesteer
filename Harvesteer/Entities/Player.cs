@@ -17,25 +17,26 @@ namespace Harvesteer.Entities
 {
     public partial class Player
     {
-        double LastTimeAttackStarted = -999;
-        double AttackDamageDuration = .25;
-        double AttackCooldown = .5;
+        double LastTimeAttackStarted;
 
         public bool CanAttack => TimeManager.SecondsSince(LastTimeAttackStarted) > AttackCooldown;
+
         public bool IsAttackActive => TimeManager.SecondsSince(LastTimeAttackStarted) < AttackDamageDuration;
 
         private void CustomInitialize()
         {
-
         }
 
         private void CustomActivity()
         {
+            // If left mouse button pushed AND CanAttack is true...
             if (InputManager.Mouse.ButtonPushed(Mouse.MouseButtons.LeftButton) && CanAttack)
             {
+                // Use sword
                 useSword();
             }
 
+            // If attacking, enable SwordCollision
             SwordCollision.Visible = IsAttackActive;
         }
 
@@ -53,15 +54,19 @@ namespace Harvesteer.Entities
 
         void useSword()
         {
-            //Debug.WriteLine("MOUSE BUTTON CLICKED");
+            // Check when the last attack started
             LastTimeAttackStarted = TimeManager.CurrentScreenTime;
 
+            // Get the current position of the mouse
             var differenceVector = GuiManager.Cursor.WorldPosition.ToVector3() - this.Position;
+            // Get the angle of where the mouse is relative to the player
             var angleInDegrees = differenceVector.AngleDegreesOrZero();
+            // Adjust the angle to the nearest axis
             var angleRoundedTo90Degrees = MathFunctions.RoundFloat(angleInDegrees, 90);
-            var startSwingAngleDegrees = angleRoundedTo90Degrees;
-            var angleRoundedBackInRadians = MathHelper.ToRadians(startSwingAngleDegrees);
+            // Get the adjusted degree in Radians
+            var angleRoundedBackInRadians = MathHelper.ToRadians(angleRoundedTo90Degrees);
 
+            // Set the SwordCollision to the adjusted angled position
             this.SwordCollision.RelativeRotationZ = angleRoundedBackInRadians;
 
         }

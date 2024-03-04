@@ -27,6 +27,7 @@ namespace Harvesteer.Screens
         {
             // skipping instantiation of FlatRedBall.Math.PositionedObjectList<Player> PlayerList in Screens\Level1 (Screen) because it has its InstantiatedByBase set to true
             // skipping instantiation of FlatRedBall.Math.PositionedObjectList<Enemy> EnemyList in Screens\Level1 (Screen) because it has its InstantiatedByBase set to true
+            // skipping instantiation of FlatRedBall.Math.PositionedObjectList<PlayerStats> PlayerStatsList in Screens\Level1 (Screen) because it has its InstantiatedByBase set to true
         }
         public override void Initialize (bool addToManagers) 
         {
@@ -35,6 +36,7 @@ namespace Harvesteer.Screens
             mSolidCollision = new FlatRedBall.TileCollisions.TileShapeCollection(); mSolidCollision.Name = "SolidCollision";
             // skipping instantiation of FlatRedBall.Math.PositionedObjectList<Player> PlayerList in Screens\Level1 (Screen) because it has its InstantiatedByBase set to true
             // skipping instantiation of FlatRedBall.Math.PositionedObjectList<Enemy> EnemyList in Screens\Level1 (Screen) because it has its InstantiatedByBase set to true
+            // skipping instantiation of FlatRedBall.Math.PositionedObjectList<PlayerStats> PlayerStatsList in Screens\Level1 (Screen) because it has its InstantiatedByBase set to true
             
             
             base.Initialize(addToManagers);

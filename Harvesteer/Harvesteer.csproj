@@ -179,6 +179,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>verticallines</Name>
     </None>
+    <None Include="content\gumproject\components\healthbar.gucx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>healthbar</Name>
+    </None>
     <None Include="content\gumproject\fontcache\font10arial.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>font10arial</Name>
@@ -323,8 +327,13 @@
     <Compile Include="Entities\Player.Generated.cs">
       <DependentUpon>Player.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\PlayerStats.cs" />
+    <Compile Include="Entities\PlayerStats.Generated.cs">
+      <DependentUpon>PlayerStats.cs</DependentUpon>
+    </Compile>
     <Compile Include="Factories\EnemyFactory.Generated.cs" />
     <Compile Include="Factories\PlayerFactory.Generated.cs" />
+    <Compile Include="Factories\PlayerStatsFactory.Generated.cs" />
     <Compile Include="FileAliases.Generated.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Game1.Generated.cs">
@@ -506,6 +515,7 @@
       <DependentUpon>VerticalLinesRuntime.cs</DependentUpon>
     </Compile>
     <Compile Include="GumRuntimes\GumIdb.Generated.cs" />
+    <Compile Include="GumRuntimes\HealthBarRuntime.Generated.cs" />
     <Compile Include="GumRuntimes\NineSliceRuntime.Generated.cs" />
     <Compile Include="GumRuntimes\PolygonRuntime.Generated.cs" />
     <Compile Include="GumRuntimes\RectangleRuntime.Generated.cs" />

@@ -103,6 +103,9 @@
     },
     {
       "Name": "Entities\\Player"
+    },
+    {
+      "Name": "Entities\\PlayerStats"
     }
   ],
   "Bookmarks": [],
