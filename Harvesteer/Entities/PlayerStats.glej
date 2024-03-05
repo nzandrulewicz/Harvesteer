@@ -61,6 +61,7 @@
       "InstructionSaves": [],
       "SourceType": 3,
       "SourceFile": "HealthBarRuntime",
+      "HasPublicProperty": true,
       "AttachToContainer": true,
       "GenerateTimedEmit": true
     }

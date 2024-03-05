@@ -25,6 +25,7 @@ namespace Harvesteer.Entities
 
         private void CustomInitialize()
         {
+
         }
 
         private void CustomActivity()
@@ -36,19 +37,28 @@ namespace Harvesteer.Entities
                 useSword();
             }
 
-            // If attacking, enable SwordCollision
+            // If not attacking, disable SwordCollision
             SwordCollision.Visible = IsAttackActive;
+
+            if (IsAttackActive)
+            {
+                // Stop player movement
+                this.CurrentMovement = TopDownValues[DataTypes.TopDownValues.SwingingSword];
+            }
+            else
+            {
+                // Enable player movement
+                this.CurrentMovement = TopDownValues[DataTypes.TopDownValues.Default];
+            }
         }
 
         private void CustomDestroy()
         {
 
-
         }
 
         private static void CustomLoadStaticContent(string contentManagerName)
         {
-
 
         }
 
@@ -68,7 +78,6 @@ namespace Harvesteer.Entities
 
             // Set the SwordCollision to the adjusted angled position
             this.SwordCollision.RelativeRotationZ = angleRoundedBackInRadians;
-
         }
     }
 }

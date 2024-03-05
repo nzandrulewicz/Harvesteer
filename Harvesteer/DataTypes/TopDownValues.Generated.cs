@@ -15,9 +15,11 @@ namespace Harvesteer.DataTypes
         public float CustomDecelerationValue;
         public int InheritOrOverwriteAsInt;
         public const string Default = "Default";
+        public const string SwingingSword = "SwingingSword";
         public static System.Collections.Generic.List<System.String> OrderedList = new System.Collections.Generic.List<System.String>
         {
         Default
+        ,SwingingSword
         };
         
         

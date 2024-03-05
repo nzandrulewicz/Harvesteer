@@ -80,7 +80,7 @@ namespace Harvesteer.Entities
                 return mDamageToDeal;
             }
         }
-        public decimal mMaxHealth = 5m;
+        private decimal mMaxHealth = 5m;
         public virtual decimal MaxHealth
         {
             set
