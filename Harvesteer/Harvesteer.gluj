@@ -77,7 +77,8 @@
     {
       "Name": "TopDownValues",
       "CsvFilesUsingThis": [
-        "Entities/Player/TopDownValuesStatic.csv"
+        "Entities/Player/TopDownValuesStatic.csv",
+        "Entities/Enemy/TopDownValuesStatic.csv"
       ],
       "RequiredProperties": [],
       "GenerateCode": true
@@ -124,9 +125,13 @@
     "Is2D": true,
     "ResolutionWidth": 480,
     "ResolutionHeight": 480,
+    "FixedAspectRatio": true,
+    "AspectRatioBehavior": 1,
     "AspectRatioWidth": 16.0,
-    "AspectRatioHeight": 9.0,
+    "AspectRatioHeight": 16.0,
     "SupportLandscape": true,
+    "RunInFullScreen": true,
+    "AllowWindowResizing": true,
     "Scale": 200,
     "ScaleGum": 100,
     "DominantInternalCoordinates": 1,

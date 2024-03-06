@@ -9,25 +9,23 @@ using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using Microsoft.Xna.Framework;
+using Harvesteer.Scripts;
 
 namespace Harvesteer.Entities
 {
     public partial class Enemy
     {
-        /// <summary>
-        /// Initialization logic which is executed only one time for this Entity (unless the Entity is pooled).
-        /// This method is called when the Entity is added to managers. Entities which are instantiated but not
-        /// added to managers will not have this method called.
-        /// </summary>
+        public Vector2 vPlayerPosition;
+
         private void CustomInitialize()
         {
+            var input = new MovementInputDevice(this.Position.ToVector2(), vPlayerPosition);
 
-
+            InitializeTopDownInput(input);
         }
 
         private void CustomActivity()
         {
-
 
         }
 

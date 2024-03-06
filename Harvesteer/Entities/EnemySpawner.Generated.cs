@@ -51,30 +51,6 @@ namespace Harvesteer.Entities
                 return mSpawnRateIncrease;
             }
         }
-        private float mMinVelocity = 50f;
-        public virtual float MinVelocity
-        {
-            set
-            {
-                mMinVelocity = value;
-            }
-            get
-            {
-                return mMinVelocity;
-            }
-        }
-        private float mMaxVelocity = 100f;
-        public virtual float MaxVelocity
-        {
-            set
-            {
-                mMaxVelocity = value;
-            }
-            get
-            {
-                return mMaxVelocity;
-            }
-        }
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
         public EnemySpawner () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
@@ -155,8 +131,6 @@ namespace Harvesteer.Entities
             }
             EnemiesPerSecond = 0.2f;
             SpawnRateIncrease = 0.015f;
-            MinVelocity = 50f;
-            MaxVelocity = 100f;
         }
         public virtual void ConvertToManuallyUpdated () 
         {

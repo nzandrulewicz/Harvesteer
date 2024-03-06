@@ -23,6 +23,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BlueFrog</Name>
     </None>
+    <None Include="content\entities\enemy\topdownvaluesstatic.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>TopDownValuesStatic</Name>
+    </None>
     <None Include="content\entities\player\playersprite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>PlayerSprite</Name>
@@ -538,6 +542,8 @@
     <Compile Include="Screens\Level1.Generated.cs">
       <DependentUpon>Level1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Scripts\MovementInputDevice.cs" />
+    <Compile Include="Scripts\EntityTracker.cs" />
     <Compile Include="Setup\CameraSetup.Generated.cs" />
     <Compile Include="TileCollisions\CollidableListVsTileShapeCollectionRelationship.Generated.cs" />
     <Compile Include="TileCollisions\CollidableVsTileShapeCollectionRelationship.Generated.cs" />

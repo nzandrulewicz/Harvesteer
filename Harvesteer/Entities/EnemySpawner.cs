@@ -63,6 +63,8 @@ namespace Harvesteer.Entities
 
         private Vector3 GetRandomEnemyPosition()
         {
+            return new Vector3(64, -64, 0);
+
             int randomSide = FlatRedBallServices.Random.Next(4);
 
             // Let's get the absolute coordinates of the edge of the screen:
@@ -126,6 +128,7 @@ namespace Harvesteer.Entities
 
             // Now we can return the value
             return new Vector3(offScreenX, offScreenY, 0);
+
         }
 
         private Vector3 GetRandomEnemySpeed(Vector3 position)
@@ -136,9 +139,9 @@ namespace Harvesteer.Entities
 
             directionToCenter.Normalize();
 
-            float speed = MinVelocity + FlatRedBallServices.Random.Between(MinVelocity, MaxVelocity);
+            //float speed = MinVelocity + FlatRedBallServices.Random.Between(MinVelocity, MaxVelocity);
 
-            return speed * directionToCenter;
+            return directionToCenter;
         }
     }
 }

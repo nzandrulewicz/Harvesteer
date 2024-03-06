@@ -11,6 +11,8 @@ using FlatRedBall;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Harvesteer.DataTypes;
+using FlatRedBall.IO.Csv;
 namespace Harvesteer.Entities
 {
     public partial class Enemy : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable, FlatRedBall.Entities.IEntity, FlatRedBall.Math.Geometry.ICollidable, FlatRedBall.Entities.IDamageArea, FlatRedBall.Entities.IDamageable
@@ -27,6 +29,7 @@ namespace Harvesteer.Entities
         static System.Collections.Generic.List<string> mRegisteredUnloads = new System.Collections.Generic.List<string>();
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
         protected static Microsoft.Xna.Framework.Graphics.Texture2D BlueFrog;
+        public static System.Collections.Generic.Dictionary<string, Harvesteer.DataTypes.TopDownValues> TopDownValuesStatic;
         
         private FlatRedBall.Math.Geometry.Circle mCircleInstance;
         public FlatRedBall.Math.Geometry.Circle CircleInstance
@@ -140,6 +143,14 @@ namespace Harvesteer.Entities
             SpriteInstance = new FlatRedBall.Sprite();
             SpriteInstance.Name = "SpriteInstance";
             SpriteInstance.CreationSource = "Glue";
+            InitializeInput();
+            if (TopDownValues?.Count > 0)
+            {
+                mCurrentMovement = TopDownValues.Values.FirstOrDefault();
+            }
+            PossibleDirections = PossibleDirections.FourWay;
+            mTopDownAnimationLayer = new TopDown.DirectionBasedAnimationLayer();
+            mTopDownAnimationLayer.TopDownEntity = this;
             
             PostInitialize();
             if (addToManagers)
@@ -173,6 +184,7 @@ namespace Harvesteer.Entities
             mLastTimeCalledActivity = FlatRedBall.TimeManager.CurrentScreenTime;
             #endif
             
+            ApplyMovementInput();
             CustomActivity();
         }
         public virtual void ActivityEditMode () 
@@ -299,6 +311,18 @@ namespace Harvesteer.Entities
                     registerUnload = true;
                 }
                 BlueFrog = FlatRedBall.FlatRedBallServices.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/enemy/bluefrog.png", ContentManagerName);
+                if (TopDownValuesStatic == null)
+                {
+                    {
+                        // We put the { and } to limit the scope of oldDelimiter
+                        char oldDelimiter = FlatRedBall.IO.Csv.CsvFileManager.Delimiter;
+                        FlatRedBall.IO.Csv.CsvFileManager.Delimiter = ',';
+                        System.Collections.Generic.Dictionary<string, Harvesteer.DataTypes.TopDownValues> temporaryCsvObject = new System.Collections.Generic.Dictionary<string, Harvesteer.DataTypes.TopDownValues>();
+                        FlatRedBall.IO.Csv.CsvFileManager.CsvDeserializeDictionary<string, Harvesteer.DataTypes.TopDownValues>("content/entities/enemy/topdownvaluesstatic.csv", temporaryCsvObject, FlatRedBall.IO.Csv.DuplicateDictionaryEntryBehavior.Replace);
+                        FlatRedBall.IO.Csv.CsvFileManager.Delimiter = oldDelimiter;
+                        TopDownValuesStatic = temporaryCsvObject;
+                    }
+                }
             }
             if (registerUnload && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
             {
@@ -327,6 +351,10 @@ namespace Harvesteer.Entities
                 {
                     BlueFrog= null;
                 }
+                if (TopDownValuesStatic != null)
+                {
+                    TopDownValuesStatic= null;
+                }
             }
         }
         [System.Obsolete("Use GetFile instead")]
@@ -336,6 +364,8 @@ namespace Harvesteer.Entities
             {
                 case  "BlueFrog":
                     return BlueFrog;
+                case  "TopDownValuesStatic":
+                    return TopDownValuesStatic;
             }
             return null;
         }
@@ -345,6 +375,8 @@ namespace Harvesteer.Entities
             {
                 case  "BlueFrog":
                     return BlueFrog;
+                case  "TopDownValuesStatic":
+                    return TopDownValuesStatic;
             }
             return null;
         }
@@ -369,6 +401,10 @@ namespace Harvesteer.Entities
                 }
                 FlatRedBall.SpriteManager.ReplaceTexture(oldTexture, BlueFrog);
             }
+            if (whatToReload == TopDownValuesStatic)
+            {
+                FlatRedBall.IO.Csv.CsvFileManager.UpdateDictionaryValuesFromCsv(TopDownValuesStatic, "content/entities/enemy/topdownvaluesstatic.csv");
+            }
         }
         protected bool mIsPaused;
         public override void Pause (FlatRedBall.Instructions.InstructionList instructions) 
@@ -381,6 +417,189 @@ namespace Harvesteer.Entities
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(this);
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(CircleInstance);
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(SpriteInstance);
+        }
+        
+        #region Top-Down Methods    
+
+        public void InitializeTopDownInput(FlatRedBall.Input.IInputDevice inputDevice)
+        {
+            this.MovementInput = inputDevice?.Default2DInput;
+            this.InputDevice = inputDevice;
+            InputEnabled = inputDevice != null;
+
+            CustomInitializeTopDownInput();
+        }
+
+        partial void CustomInitializeTopDownInput();
+
+        private void ApplyMovementInput()
+        {
+            ////////early out/////////
+            if(mCurrentMovement == null)
+            {
+                return;
+            }
+            //////end early out
+
+            var absoluteVelocity = this.Velocity;
+            var groundVelocity = this.Velocity - GroundVelocity;
+
+            var desiredGroundVelocity = Microsoft.Xna.Framework.Vector3.Zero;
+            var desiredAbsoluteVelocity = GroundVelocity;
+
+            if (InputEnabled && MovementInput != null)
+            {
+                var vector = new Microsoft.Xna.Framework.Vector2(MovementInput.X, MovementInput.Y);
+                if(vector.LengthSquared() > 1)
+                {
+                    vector = Microsoft.Xna.Framework.Vector2ExtensionMethods.AtLength(vector, 1);
+                }
+                desiredGroundVelocity = new Microsoft.Xna.Framework.Vector3(vector.X, vector.Y, absoluteVelocity.Z) * 
+                    mCurrentMovement.MaxSpeed * TopDownSpeedMultiplier;
+            }
+            desiredAbsoluteVelocity = GroundVelocity + desiredGroundVelocity;
+
+            var absoluteDifference =  desiredAbsoluteVelocity - absoluteVelocity;
+            var groundDifference = desiredGroundVelocity - groundVelocity;
+
+            Acceleration = Microsoft.Xna.Framework.Vector3.Zero;
+
+            var absoluteDifferenceLength = absoluteDifference.Length();
+
+            const float differenceEpsilon = .1f;
+
+            if (absoluteDifferenceLength > differenceEpsilon)
+            {
+                var isMovingRelativeToGround = groundVelocity.X != 0 || groundVelocity.Y != 0;
+                var isDesiredGroundVelocityNonZero = desiredGroundVelocity.X != 0 || desiredGroundVelocity.Y != 0;
+
+                // A 0 to 1 ratio of acceleration to deceleration, where 1 means the player is accelerating completely,
+                // and 0 means decelerating completely. This value will often be between 0 and 1 because the player may
+                // set desired velocity perpendicular to the current velocity
+                float accelerationRatio = 1;
+                if(isMovingRelativeToGround && isDesiredGroundVelocityNonZero == false)
+                {
+                    // slowing down completely
+                    accelerationRatio = 0;
+                }
+                else if(isMovingRelativeToGround == false && isDesiredGroundVelocityNonZero)
+                {
+                    accelerationRatio = 1;
+                }
+                else
+                {
+                    // both is moving and has a non-zero desired value
+                    var movementAngle = (float)Math.Atan2(absoluteVelocity.Y, absoluteVelocity.X);
+                    var desiredAngle = (float)Math.Atan2(absoluteDifference.Y, absoluteDifference.X);
+
+                    accelerationRatio = 1-
+                        Math.Abs(FlatRedBall.Math.MathFunctions.AngleToAngle(movementAngle, desiredAngle)) / (float)Math.PI;
+
+                }
+
+                var secondsToTake = Microsoft.Xna.Framework.MathHelper.Lerp(
+                    mCurrentMovement.DecelerationTime,
+                    mCurrentMovement.AccelerationTime,
+                    accelerationRatio);
+
+                if(!mCurrentMovement.UsesAcceleration || secondsToTake == 0)
+                {
+                    this.Acceleration = Microsoft.Xna.Framework.Vector3.Zero;
+                    this.Velocity = desiredAbsoluteVelocity;
+                }
+                else
+                {
+                    float accelerationMagnitude;
+                    if(this.Velocity.Length() > mCurrentMovement.MaxSpeed * TopDownSpeedMultiplier && mCurrentMovement.IsUsingCustomDeceleration)
+                    {
+                        accelerationMagnitude = mCurrentMovement.CustomDecelerationValue;
+                    }
+                    else
+                    {
+                        // If the TopDownSpeedMultiplier is really small, then this makes acceleration go slower
+                        // so it reaches the max speed in the same amount of time. However, if the player is moving
+                        // faster than the multiplier, we want to slow down at normal speed rather than multiplied by
+                        // TopDownSpeedMulitplier. An extreme case is where TopDownSpeedMultiplier is 0, In that case, the
+                        // character would never slow down, which is bad.
+                        if(this.Velocity.Length() > mCurrentMovement.MaxSpeed * TopDownSpeedMultiplier)
+                        {
+                            // This may not give perfect control over deceleration, but that's why CustomDecelerationValue exists
+                            accelerationMagnitude = mCurrentMovement.MaxSpeed / secondsToTake;
+                        }
+                        else
+                        {
+                            accelerationMagnitude = TopDownSpeedMultiplier * mCurrentMovement.MaxSpeed / secondsToTake;
+                        }
+                    }
+                
+                    var nonNormalizedAbsoluteDifference = absoluteDifference;
+                    var normalizedAbsoluteDifference = absoluteDifference;
+                    normalizedAbsoluteDifference.Normalize();
+                
+                    var accelerationToSet = accelerationMagnitude * normalizedAbsoluteDifference;
+                    var expectedVelocityToAdd = accelerationToSet * TimeManager.SecondDifference;
+                
+                    if(expectedVelocityToAdd.Length() > nonNormalizedAbsoluteDifference.Length())
+                    {
+                        // we will overshoot it, so let's adjust the acceleration accordingly:
+                        var ratioOfToAdd = nonNormalizedAbsoluteDifference.Length() / expectedVelocityToAdd.Length();
+                        this.Acceleration = accelerationToSet * ratioOfToAdd;
+                    }
+                    else
+                        this.Acceleration = accelerationToSet;
+                }
+
+
+                if (mCurrentMovement.UpdateDirectionFromInput)
+                {
+                    if (desiredGroundVelocity.X != 0 || desiredGroundVelocity.Y != 0)
+                    {
+                        mDirectionFacing = TopDownDirectionExtensions.FromDirection(desiredGroundVelocity.X, desiredGroundVelocity.Y, PossibleDirections, mDirectionFacing);
+                    }
+                }
+                else if (mCurrentMovement.UpdateDirectionFromVelocity)
+                {
+                    const float velocityEpsilon = .1f;
+                    var shouldAssignDirection = (this.Velocity.Length() - groundVelocity.Length()) > velocityEpsilon || groundDifference.Length() > 0;
+
+                    if(groundVelocity.LengthSquared() == 0)
+                    {
+                        if(desiredGroundVelocity.X != 0 || desiredGroundVelocity.Y != 0)
+                        {
+                            // use the desired movement value, so the player can
+                            // change directions when facing a wall
+                            mDirectionFacing = TopDownDirectionExtensions.FromDirection(desiredGroundVelocity.X, desiredGroundVelocity.Y, PossibleDirections, mDirectionFacing);
+                        }
+                    }
+                    else
+                    {
+                        mDirectionFacing = TopDownDirectionExtensions.FromDirection(groundVelocity.X, groundVelocity.Y, PossibleDirections, mDirectionFacing);
+                    }
+                }
+            }
+            else
+            {
+                Velocity = desiredAbsoluteVelocity;
+                Acceleration = Microsoft.Xna.Framework.Vector3.Zero;
+            }
+
+        }
+
+        #endregion
+
+
+        
+        /// <summary>
+        /// Sets the MovementInput to either the keyboard or 
+        /// Xbox360GamePad index 0. This can be overridden by base classes to default
+        /// to different input devices.
+        /// </summary>
+        protected virtual void InitializeInput()
+        {
+        
+        InputEnabled = true;
+        
+
         }
         public virtual void MoveToLayer (FlatRedBall.Graphics.Layer layerToMoveTo) 
         {
@@ -401,5 +620,66 @@ namespace Harvesteer.Entities
             LayerProvidedByContainer = layerToMoveTo;
         }
         partial void CustomActivityEditMode();
+    }
+    public partial class Enemy : TopDown.ITopDownEntity
+    {
+        #region Top Down Fields
+        protected virtual System.Collections.Generic.Dictionary<string, Harvesteer.DataTypes.TopDownValues> TopDownValues => TopDownValuesStatic;
+        public Microsoft.Xna.Framework.Vector3 GroundVelocity;
+        public List<TopDown.AnimationSet> AnimationSets { get; set; } = new List<TopDown.AnimationSet>();
+        DataTypes.TopDownValues mCurrentMovement;
+        public float TopDownSpeedMultiplier { get; set; } = 1;
+        /// <summary>
+        /// The current movement variables used when applying input.
+        /// </summary>
+        public DataTypes.TopDownValues CurrentMovement
+        {
+            get
+            {
+                return mCurrentMovement;
+            }
+            private set
+            {
+                mCurrentMovement = value;
+            }
+        }
+        public FlatRedBall.Input.IInputDevice InputDevice
+        {
+            get;
+            private set;
+        }
+        TopDownDirection mDirectionFacing;
+        /// <summary>
+        /// Which direciton the character is facing.
+        /// </summary>
+        public TopDownDirection DirectionFacing
+        {
+            get
+            {
+                return mDirectionFacing;
+            }
+            set
+            {
+                mDirectionFacing = value;
+            }
+        }
+        public PossibleDirections PossibleDirections
+        {
+            get;
+            set;
+        }
+        /// <summary>
+        /// The input object which controls the horizontal movement of the character.
+        /// Common examples include a d-pad, analog stick, or keyboard keys.
+        /// </summary>
+        public FlatRedBall.Input.I2DInput MovementInput { get; set; }
+        /// <summary>
+        /// Whether input is read to control the movement of the character.
+        /// This can be turned off if the player should not be able to control
+        /// the character. Velocity and acceleration will still be applied using the current set of movement values.
+        /// </summary>
+        public bool InputEnabled { get; set; }
+        TopDown.DirectionBasedAnimationLayer mTopDownAnimationLayer;
+        #endregion
     }
 }

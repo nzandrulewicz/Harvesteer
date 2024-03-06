@@ -53,7 +53,7 @@ namespace Harvesteer
             var contentManagerWrapper = new FlatRedBall.Gum.ContentManagerWrapper();
             contentManagerWrapper.ContentManagerName = FlatRedBall.FlatRedBallServices.GlobalContentManager;
             RenderingLibrary.Content.LoaderManager.Self.ContentLoader = contentManagerWrapper;
-            FlatRedBall.Gum.GumIdb.StaticInitialize("content/gumproject/gumproject.gumx"); FlatRedBall.Gum.GumIdbExtensions.RegisterTypes();  FlatRedBall.Gui.GuiManager.BringsClickedWindowsToFront = false;FlatRedBall.Gum.GumIdb.FixedCanvasAspectRatio = null;Gum.Wireframe.GraphicalUiElement.ShowLineRectangles = false;
+            FlatRedBall.Gum.GumIdb.StaticInitialize("content/gumproject/gumproject.gumx"); FlatRedBall.Gum.GumIdbExtensions.RegisterTypes();  FlatRedBall.Gui.GuiManager.BringsClickedWindowsToFront = false;FlatRedBall.Gum.GumIdb.FixedCanvasAspectRatio = 16.0m/16.0m;Gum.Wireframe.GraphicalUiElement.ShowLineRectangles = false;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
             			IsInitialized = true;
             #if DEBUG && WINDOWS

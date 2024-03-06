@@ -18,7 +18,6 @@ namespace Harvesteer.Screens
 {
     public partial class GameScreen
     {
-
         void CustomInitialize()
         {
             Camera.Main.X = Camera.Main.OrthogonalWidth / 2.0f;
@@ -29,8 +28,8 @@ namespace Harvesteer.Screens
         {
             for (int i = 0; i < EnemyList.Count; i++)
             {
-                EnemyList[i].Velocity = (Player1.Position - EnemyList[i].Position).AtLength(40);
-            }
+                EnemyList[i].vPlayerPosition = Player1.Position.ToVector2();
+            }   
         }
 
         void CustomDestroy()
