@@ -19,14 +19,14 @@ namespace Harvesteer.Entities
 
         private void CustomInitialize()
         {
-            var input = new MovementInputDevice(this.Position.ToVector2(), vPlayerPosition);
-
-            InitializeTopDownInput(input);
+            
         }
 
         private void CustomActivity()
         {
+            var input = new MovementInputDevice(this.Position.ToVector2(), vPlayerPosition);
 
+            InitializeTopDownInput(input);
         }
 
         private void CustomDestroy()

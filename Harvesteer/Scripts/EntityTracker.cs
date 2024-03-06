@@ -27,6 +27,8 @@ namespace Harvesteer.Scripts
         /// Returns a vector that points from the point represented by <paramref name="from"/>
         /// to the point represented by <paramref name="to"/>
         /// </summary>
+        /// Returns a Vector that represents the direction (degrees or radians) and distance between the parameters "from" and "to"
+        /// Vector2 = (to.X - from.X, to.Y - from.Y) = to - from
         public static Vector2 GetVectorTo(Vector2 from, Vector2 to)
         {
             return to - from;
@@ -36,7 +38,9 @@ namespace Harvesteer.Scripts
         {
             get
             {
-                return vEntityTarget.X;
+                Vector2 result = GetVectorTo(vEntitySource, vEntityTarget);
+
+                return result.X;
             }
         }
 
@@ -44,7 +48,9 @@ namespace Harvesteer.Scripts
         {
             get
             {
-                return vEntityTarget.Y;
+                Vector2 result = GetVectorTo(vEntitySource, vEntityTarget);
+
+                return result.Y;
             }
         }
 
